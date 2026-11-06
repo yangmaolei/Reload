@@ -125,7 +125,7 @@ public sealed partial class DiagnosticsViewModel : ObservableObject
             return;
         }
 
-        var fileName = $"GameSaveSync-诊断-{DateTime.Now:yyyyMMdd-HHmm}.zip";
+        var fileName = $"Reload-诊断-{DateTime.Now:yyyyMMdd-HHmm}.zip";
         var target = _dialogs.PickSaveFile(fileName);
         if (target is null)
         {

@@ -55,7 +55,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     private string username = string.Empty;
 
     [ObservableProperty]
-    private string remoteRoot = "GameSaveSync";
+    private string remoteRoot = AppPaths.DefaultRemoteRoot;
 
     [ObservableProperty]
     private string certificateThumbprint = string.Empty;

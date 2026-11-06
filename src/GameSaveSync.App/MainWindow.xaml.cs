@@ -31,7 +31,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, $"加载失败：{ex.Message}", "GameSaveSync", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(this, $"加载失败：{ex.Message}", "Reload", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 

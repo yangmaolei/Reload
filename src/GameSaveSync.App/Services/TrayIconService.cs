@@ -28,7 +28,7 @@ public sealed class TrayIconService : IDisposable
         {
         }
 
-        return System.Drawing.Icon.ExtractAssociatedIcon(Environment.ProcessPath ?? "GameSaveSync.exe")
+        return System.Drawing.Icon.ExtractAssociatedIcon(Environment.ProcessPath ?? "Reload.exe")
                ?? System.Drawing.SystemIcons.Application;
     }
 

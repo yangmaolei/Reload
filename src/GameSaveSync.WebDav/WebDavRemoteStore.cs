@@ -275,7 +275,7 @@ public sealed class WebDavRemoteStore : IRemoteStore, IDisposable
             await _client.EnsureCollectionAsync(".probe", ct).ConfigureAwait(false);
 
             var probePath = $".probe/{Guid.NewGuid():N}.txt";
-            var payload = Encoding.UTF8.GetBytes($"GameSaveSync probe {DateTimeOffset.UtcNow:O}");
+            var payload = Encoding.UTF8.GetBytes($"Reload probe {DateTimeOffset.UtcNow:O}");
             await _client.PutAsync(probePath, payload, ct).ConfigureAwait(false);
 
             var readBack = await _client.GetAsync(probePath, ct).ConfigureAwait(false);

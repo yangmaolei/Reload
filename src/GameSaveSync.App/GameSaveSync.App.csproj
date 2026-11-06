@@ -12,7 +12,7 @@
     <Product>Reload</Product>
     <AssemblyTitle>Reload — 游戏存档同步</AssemblyTitle>
     <Description>Windows 游戏存档备份与多设备同步</Description>
-    <Version>0.4.0</Version>
+    <Version>1.0.0</Version>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>false</SelfContained>
     <!-- 这是 WPF 应用，DPI 由 manifest 的 dpiAwareness 负责；WinForms 的 DPI 检查不适用 -->

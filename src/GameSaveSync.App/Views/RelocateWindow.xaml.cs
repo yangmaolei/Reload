@@ -66,7 +66,7 @@ public partial class RelocateWindow : Window
     {
         if (Mapping.Count == 0)
         {
-            MessageBox.Show(this, "请至少为一个存档根指定目录。", "GameSaveSync", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(this, "请至少为一个存档根指定目录。", "Reload", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 

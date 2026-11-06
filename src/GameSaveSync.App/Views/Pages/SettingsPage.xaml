@@ -286,7 +286,7 @@
                 <StackPanel>
                     <TextBlock Text="关于" Style="{StaticResource Md3.TitleMedium}" Margin="0,0,0,8" />
                     <TextBlock Style="{StaticResource Md3.BodySmall}">
-                        <Run Text="GameSaveSync " />
+                        <Run Text="Reload " />
                         <Run Text="{Binding AppVersionText, Mode=OneWay}" />
                         <Run Text=" · .NET 8 / WPF / Material Design 3" />
                     </TextBlock>

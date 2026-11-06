@@ -1,174 +1,547 @@
-# Reload（M1 + M2 + M3 + M4 + M4.5）
+# Reload
 
-Windows 游戏存档管理与云备份工具（原名 GameSaveSync，v0.4 起更名 **Reload**，首次启动自动迁移旧数据目录）。
-已交付 **M1（单机闭环）**、**M2（自动化与可靠性）**、**M3（多设备）**、**M4（识别率与体验）**、
-**M4.5（界面打磨与个性化）**：手动备份/恢复 + 自动备份 + 跨机同步 + 平台自动发现 + Material Design 3 界面。
+**Windows 游戏存档备份与多设备同步工具。**
 
-> 代码仓库：<https://github.com/yangmaolei/Reload>　·　分支 `main`　·　目标框架 .NET 8 / WPF / Windows x64
+Reload 会自动找出你电脑上各个游戏的存档目录，把它们做成**不可变的内容寻址快照**并备份到本地
+CAS（内容寻址存储），再通过 **WebDAV** 同步到你自己控制的云盘（Nextcloud / ownCloud、坚果云、
+群晖、Alist 等）。换一台电脑时，存档会跟着走——即使那台机器上游戏装在别的位置。
 
-## M4.6 能做什么
+- 平台：Windows x64
+- 技术栈：.NET 8 / WPF / Material Design 3
+- 当前版本：**1.0.0**
+- 许可：[MIT](LICENSE)
 
-- **联网查询存档路径**：手动添加游戏时点「联网查询存档路径」，按名字去 PCGamingWiki 查已知存档位置，
-  自动以令牌形式（%USERPROFILE% 等）填入目录；失败静默降级不影响手动操作。
-- **海报自动获取**：封面优先下载 Steam 竖版海报（600×900 立绘，裁成方形卡片最合适），失败回退横版头图、
-  再回退首字母色块；游戏列表加载后后台自动拉取。
-- **控件圆角化**：所有文本框/密码框由"上圆下方"改为四角全圆（含边框），按钮统一全胶囊；修复了按钮
-  `Tag` 被占用导致圆角失效的问题。
+> 项目原名 `GameSaveSync`，v0.4 起更名为 **Reload**。首次启动会自动把旧数据目录
+> `%LOCALAPPDATA%\GameSaveSync` 迁移到 `%LOCALAPPDATA%\Reload`，无需手动操作。
 
-## M4.5 能做什么
+---
 
-- **更名 Reload**：窗口/托盘/关于页全部换新；数据目录 `%LOCALAPPDATA%\Reload`，启动时自动从旧目录搬移；
-  开机自启注册表值同步改名并清理旧值；发布产物为 `Reload.exe`（带自绘应用图标）。
-- **主题自定义**：6 个预设主题色（青/靛蓝/翠绿/琥珀/玫红/石墨）× 亮/暗/跟随系统，设置页即时切换、持久化；
-  亮暗两套完整 MD3 中性色板，跟随系统时读 Windows 深色模式。
-- **设置增强**：触发时机（退出延迟/去抖/空闲间隔）可编辑保存；**全局排除规则**（每行一个通配符，
-  对所有游戏生效，下次快照立即生效）；规则库文件路径与数据目录入口集中在"数据与设备"。
-- **图标与清晰度**：应用 ico（7 尺寸自绘）接入 exe/窗口/托盘；20 个按钮补齐 Segoe Fluent 图标；
-  封面 `HighQuality` 缩放消除 125% 缩放下重采样发糊；Snackbar 移到底部中央避免遮挡内容。
+## 目录
 
-## M4 能做什么
+- [核心特性](#核心特性)
+- [安装](#安装)
+- [快速上手](#快速上手)
+- [配置说明](#配置说明)
+- [使用示例](#使用示例)
+- [数据与目录布局](#数据与目录布局)
+- [远端（WebDAV）布局](#远端webdav-布局)
+- [常见问题](#常见问题)
+- [从源码构建](#从源码构建)
+- [工程结构](#工程结构)
+- [贡献](#贡献)
+- [许可证](#许可证)
 
-- **平台自动发现**：Steam（多库 `libraryfolders.vdf` + `appmanifest_*.acf` + `userdata/<id>/<appid>/remote`）、
-  Epic（`Manifests/*.item`）、GOG（`goggame-*.info`）、Ubisoft（`savegames/<userId>/<gameId>`）、
-  Xbox / 微软商店（MSIX 游戏包 → `Packages/<PFN>/SystemAppData/wgs`；Xbox 原生库 `<盘符>\XboxGames`
-  的 `GameSave\pgs` 云存档）。
-- **路径规则库**：内置 11 条（My Games / Documents / Saved Games / Roaming / LocalAppData / Unity / Unreal /
-  RPG Maker / Ren'Py / GameMaker / 安装目录）+ 引擎识别；数据目录 `save-paths.yaml` 可按 id 覆盖或追加，
-  首次启动生成 `save-paths.sample.yaml`。
-- **探测模式**：记录候选目录指纹 → 玩几分钟 → 对比差异，按新增/修改、存档扩展名、路径关键词打分，勾选即用。
-- **封面**：Steam CDN 头图缓存到 `covers/`，无封面用 MD3 色块 + 首字母。
-- **诊断页**：存储/队列/设备/远端、最近 200 条日志、连接测试、导出**已脱敏**诊断包（zip）。
-- **便携模式**：exe 同级 `portable.flag` → 数据放 `<exe>/data`，不写注册表，界面禁用开机自启。
-- **Material Design 3 界面**：完整色彩角色/字体阶梯/形状令牌；五型按钮、三型卡片、filled 输入框、导航 rail、
-  chip、Switch、FAB；卡片墙 + 详情时间线 + 差异视图 + 四页导航 + 三步首次向导 + 探测窗口。
+---
 
-## M3 能做什么
+## 核心特性
 
-- **设备注册与索引**：远端 `index.json` 记录每个游戏的最新快照与设备；`devices/<id>.json` 记录设备在线时间。
-- **下行同步**：每 60 秒只轮询 `index.json`（`If-None-Match`，命中 304 几乎零成本）；发现本机没见过的快照才拉清单与对象，逐个校验 BLAKE3。
-- **冲突不丢数据**：两台各改一次 → 云端两个快照都在，索引标 `conflict`，界面并排展示两侧（设备/时间/文件数/大小/相对共同祖先差异），可选一边或导出两侧 zip。
-- **跨机重新定位**：令牌解析不到时标记「需重新定位」，由用户把存档根映射到本机目录（存 `games.path_overrides`），绝不猜路径。
-- **服务商适配**：Generic 单次 PUT / Nextcloud 分块上传（MOVE 失败自动回退）/ RateLimited 串行限速。
+### 自动发现游戏与存档目录
 
-> 需求方案与分阶段 Prompt 见 `../2026-10-30-20-30-55/游戏存档同步工具-方案与Prompt.md`
-> 与 `../2026-10-30-20-30-55/分阶段Prompt-M1-M2-M3.md`。
+内置 5 个平台定位器，扫描本机游戏库并推导存档位置（另有「手动添加」）：
 
-## M2 能做什么
+| 平台 | 扫描依据 | 存档位置来源 |
+|---|---|---|
+| **Steam** | `libraryfolders.vdf`（多库）+ `appmanifest_*.acf` | 定位器直接给出 `userdata/<id>/<appid>/remote` |
+| **Epic** | `Manifests/*.item` | 定位器给安装目录，存档路径由规则库推导 |
+| **GOG** | `goggame-*.info` | 定位器给安装目录，存档路径由规则库推导 |
+| **Ubisoft** | `savegames/<userId>/<gameId>` | 定位器直接给出 `Ubisoft Game Launcher\savegames\<gameId>` |
+| **Xbox / 微软商店** | MSIX(GDK) 游戏包清单 + `XboxGames` 原生库 | 定位器直接给出 `Packages/<PFN>/SystemAppData/wgs`、`XboxGames\GameSave\pgs` |
+| **手动** | 你自己填 | 你自己填 |
 
-- **自动触发**：检测到游戏进程退出（默认延迟 2 s）→ 自动快照并上传；启动时打 `pre_launch` 保险点；非运行期间的文件变更走 `post_change`；游戏运行中每 15 分钟尝试 `idle` 快照（要求磁盘空闲、CPU < 30%、非全屏独占）。
-- **三层变更检测**：`FileSystemWatcher`（64 KB）→ size + mtime + `FILE_ID_INFO` 指纹 → BLAKE3 内容比对；3 s 去抖 + 400 ms 复检 + 200/400/800/1600/3200 ms 退避，**内容没变不产生快照**。
-- **崩溃安全的上传队列**：所有网络操作先写 `outbox` 表；指数退避（1s→…→5min ±20%）；启动重放 `pending`/`inflight`；同一对象只传一次。
-- **GFS 保留策略**：最近 20 个 + 每日 1×7 + 每周 1×4；手动快照永不自动删，`pre_restore` 保 7 天；清理前给出"预计释放空间"确认。
-- **常驻形态**：托盘图标、暂停 30min/1h/直到重启、开机自启、关窗最小化到托盘、退出前对待上传项二次确认、第二实例唤起已有窗口。
+共 6 种来源（5 个平台 + 手动）。
 
-## M1 能做什么
+存档目录来自三条来源，每一条都可解释：
 
-- 手动添加游戏（名称 + 一个或多个存档目录 + 排除通配符），路径存成**令牌形式**（`%APPDATA%\Studio\Game`），不存绝对路径。
-- 点「立即备份」：递归枚举 → 逐文件 **BLAKE3** → 写入本地 **CAS**（`objects/<hh>/<hash>`）→ 生成全量清单 → 上传 WebDAV。
-- 快照时间线：时间 / 触发原因 / 文件数 / 大小 / 上传状态 / 备注。
-- 点「恢复到此时点」：先算计划（新增 / 覆盖 / 删除 + 字节数）确认，**恢复前自动打 pre_restore 保险点**，然后逐文件「临时文件 → 校验哈希 → 原子 rename」。
-- WebDAV 配置页：测试连接（MKCOL + 探针写入/读回/删除）、密码 DPAPI 加密存储、自签名证书指纹固定。
-- 日志页：最近 200 条（Serilog 同步落盘到 `logs/`）。
+1. **平台目录** —— 定位器直接读出的路径（上面那张表）。
+2. **路径规则库** —— 内置 11 条规则（`My Games` / `Documents` / `Saved Games` / `Roaming` /
+   `LocalAppData` / Unity / Unreal / RPG Maker / Ren'Py / GameMaker / 安装目录），
+   可用 YAML 文件按 id 覆盖或追加。
+3. **引擎雷达** —— 识别 Unity / Unreal / RPG Maker / Ren'Py / GameMaker 后套用对应的存档布局。
+
+目录必须**真实存在且含存档类文件**才会被采用；拿不准就让你用探测模式或手动选，工具不会瞎猜。
+
+### 探测模式：让游戏自己告诉你存档在哪
+
+当规则库对某个游戏失效时：
+
+1. 点「开始探测」，记录候选目录的文件指纹（只看时间戳和大小，不读内容）。
+2. 去游戏里玩几分钟。
+3. 再点「对比」，工具按新增/修改、存档文件扩展名、路径关键词打分，列出最像存档的目录。
+
+探测全程只读元数据，不修改任何存档。
+
+### 自动备份：按游戏行为触发
+
+| 触发原因 | 时机 |
+|---|---|
+| `pre_launch` | 检测到游戏进程启动，先打一个保险点 |
+| `exit` | 游戏进程退出后延迟 2 秒（留给引擎 flush 写完） |
+| `idle` | 游戏运行中每 15 分钟一次（要求磁盘空闲、CPU < 30%、非全屏独占） |
+| `post_change` | 非运行期间检测到文件变更 |
+| `pre_restore` | 恢复前自动创建，可回到恢复前状态 |
+| `manual` | 你手动点「立即备份」 |
+
+变更检测分三层：`FileSystemWatcher`（64 KB 缓冲）→ size + mtime + 文件 ID 指纹预过滤 →
+BLAKE3 内容比对。配合 3 秒去抖与 400 毫秒复检，**内容没变就不会产生快照**。
+
+### 崩溃安全的上传队列
+
+所有网络操作先写入本地 `outbox` 表再执行：
+
+- 指数退避重试（1 秒 → … → 5 分钟，±20% 抖动）
+- 启动时自动重放 `pending` / `inflight` 状态的任务
+- 同一对象按哈希命名，重复执行幂等
+- 进程在任何时刻被强杀，下次启动都能接着传
+
+### 多设备同步与冲突处理
+
+- 每 60 秒轮询一次远端 `index.json`（带 `If-None-Match`，命中 304 几乎零成本）
+- 索引更新用 **ETag 乐观锁**，冲突时返回 412 并合并重试
+- 两台设备各改一次 → **两个快照都完整保留**，索引标记为 `conflict`，
+  界面并排展示两侧（设备 / 时间 / 文件数 / 大小 / 相对共同祖先的差异），可选一边为准
+- 索引损坏时自动扫 `games/*/snapshots/*` 重建
+- **跨机重新定位**：令牌在本机解析不到时标记「需重新定位」，
+  由你把存档根映射到本机目录——工具绝不猜路径
+
+### 恢复：两阶段 + 原子替换
+
+点「恢复到此时点」时先给出计划（新增 / 覆盖 / 删除 + 字节数）让你确认，然后：
+
+1. 自动打一个 `pre_restore` 快照；
+2. 逐文件写入临时文件 → 校验哈希 → 原子替换；
+3. 被占用的文件重试 3 次，仍失败则跳过并在结果里汇总。
+
+### 保留策略（GFS）
+
+默认：最近 20 个 + 每日 1×7 + 每周 1×4。手动创建的快照永不自动删除。
+清理前会先给出「预计释放空间」让你确认。
+
+### 其他
+
+- **封面**：Steam 游戏自动拉取竖版海报（600×900），失败回退横版头图，再回退首字母色块。
+- **联网查询存档路径**：手动添加游戏时可从 PCGamingWiki 查已知存档位置，失败静默降级。
+- **诊断页**：存储占用、队列状态、设备、远端、最近 200 条日志、连接测试，
+  以及导出**已脱敏**的诊断包（zip）。
+- **便携模式**：exe 同级放 `portable.flag`，数据写到 `<exe>\data`，不写注册表。
+- **主题**：6 种预设主题色（青 / 靛蓝 / 翠绿 / 琥珀 / 玫红 / 石墨）× 亮色 / 暗色 / 跟随系统。
+- **托盘常驻**：关窗最小化到托盘，自动备份继续在后台跑；支持暂停 30 分钟 / 1 小时 / 直到重启。
+- **单实例**：重复启动会唤起已有窗口。
+
+---
+
+## 安装
+
+### 方式一：下载 Release 产物（推荐）
+
+到 [Releases 页面](https://github.com/yangmaolei/Reload/releases) 下载 `Reload-1.0.0-win-x64.zip`：
+
+1. 解压到任意目录；
+2. 运行 `Reload.exe`；
+3. 首次启动会打开三步向导：连接云端 → 选择游戏 → 确认。
+
+> 该产物是 **win-x64 自包含单文件**（约 74 MB），无需另外安装 .NET 运行时。
+
+### 方式二：便携模式
+
+把 `portable.flag` 放在 `Reload.exe` 同级目录，数据会存到 `<exe>\data`，
+不写入注册表，界面中「开机自启」会自动禁用。适合放在移动硬盘上。
+
+### 系统要求
+
+| 项 | 要求 |
+|---|---|
+| 操作系统 | Windows 10 1809 及以上 / Windows 11 |
+| 架构 | x64 |
+| 磁盘 | 快照与对象占用的空间取决于你的存档总量（对象按内容去重） |
+| 网络 | 仅同步时需要；本地备份可完全离线使用 |
+
+---
+
+## 快速上手
+
+### 1. 配置 WebDAV
+
+首次启动的向导第一步，或之后在「设置 → WebDAV 远端」里配置：
+
+| 字段 | 说明 |
+|---|---|
+| **服务地址** | 完整 URL，例如 `https://dav.example.com/remote.php/dav/files/user` |
+| **远程根目录** | 默认 `Reload`，会在该目录下建子目录存放快照 |
+| **用户名 / 应用密码** | 建议用 WebDAV **应用密码**而非主账号密码 |
+| **自签名证书 SHA-256 指纹** | 可选。只在自签名时填，且**只按指纹放行**，不会全局跳过证书校验 |
+
+点「测试连接」会实际做一次 MKCOL + 写入探针 + 读回 + 删除的往返。
+
+> **凭据安全**：密码用 Windows **DPAPI** 加密后存在本机 SQLite，任何日志里都不会出现明文。
+
+### 2. 添加游戏
+
+三种方式：
+
+- **扫描游戏**（推荐）—— 自动列出本机已安装的游戏，勾选即可；
+- **手动添加** —— 填游戏名 + 一个或多个存档目录；
+- **探测模式** —— 规则库失效时的兜底。
+
+### 3. 备份与恢复
+
+- 游戏卡片上的「立即备份」手动触发一次快照；
+- 平时由自动触发器接管（游戏退出、空闲等）；
+- 快照时间线里点任意一条 → 「恢复到此时点」。
+
+### 4. 日常运行
+
+关窗即最小化到托盘，自动备份继续在后台跑。托盘菜单可查看状态、临时暂停、退出。
+「开机自启」开启后，登录 Windows 即自动在托盘运行。
+
+---
+
+## 配置说明
+
+所有配置都存在数据目录的 SQLite 里（`settings` 表），界面改写后立即生效。
+
+### WebDAV
+
+- **服务地址**：必须包含到用户目录的完整路径。
+- **远程根目录**：默认 `Reload`。该目录不存在时会自动逐级创建（MKCOL）。
+- **证书指纹**：留空表示走系统信任链；填了则只信任该指纹。
+- **服务商适配**：自动选择
+  - `generic` —— 单次 PUT
+  - `nextcloud-chunked` —— 大文件分块上传（MKCOL + 分片 PUT + MOVE）
+  - `rate-limited` —— 串行 + 限速（坚果云这类有频率限制的服务）
+
+  任一步服务端不支持（如不支持 MOVE）都会自动退化为单次 PUT，结果一致，只是更费带宽。
+
+### 自动化触发时机
+
+| 参数 | 范围 | 默认 |
+|---|---|---|
+| 退出延迟 | 1–30 秒 | 2 秒 |
+| 去抖 | 1–60 秒 | 3 秒 |
+| 空闲间隔 | 5–60 分钟 | 15 分钟 |
+
+保存后重启应用生效。
+
+### 全局排除规则
+
+每行一个通配符，对**所有游戏**生效，与单个游戏的排除规则叠加。以 `#` 开头的行是注释。
+
+```
+*.log
+cache/*
+*.bak
+```
+
+> 规则示例（仅作说明，实际请按自己的存档结构写）：
+> `*.tmp`、`*.log`、`cache/*`、`crash/*`
+
+### 外观
+
+- **主题色**：青 / 靛蓝 / 翠绿 / 琥珀 / 玫红 / 石墨
+- **外观模式**：亮色 / 暗色 / 跟随系统（跟随系统时读取 Windows 深色模式）
+
+切换立即生效并持久化。
+
+### 自定义路径规则
+
+设置页「数据与设备 → 自定义存档规则文件」会显示规则文件的完整路径。
+数据目录下的 `save-paths.sample.yaml` 是样例，复制成 `save-paths.yaml` 即可生效。
+
+```yaml
+version: 1
+rules:
+  # 某发行商把存档放在 Documents\MyCompany\<游戏名>
+  - id: my-company
+    description: MyCompany 的固定布局
+    namePattern: "*"
+    roots:
+      - %DOCUMENTS%\MyCompany\{name}
+
+  # 只对名字以 "Old" 开头的游戏生效
+  - id: old-games
+    description: 老游戏把存档放在安装目录
+    namePattern: "Old*"
+    roots:
+      - {installDir}\saves
+      - {installDir}\data
+```
+
+**可用占位符**
+
+| 占位符 | 含义 |
+|---|---|
+| `%USERPROFILE%` | 用户目录 |
+| `%APPDATA%` | 漫游应用数据 |
+| `%LOCALAPPDATA%` | 本地应用数据 |
+| `%DOCUMENTS%` | 文档 |
+| `%SAVEDGAMES%` | 已保存的游戏 |
+| `%STEAMUSERDATA%` | Steam `userdata` 目录（检测到时可用） |
+| `%XBOXLIBRARY%` | Xbox 原生游戏库根目录（检测到时可用） |
+| `{name}` | 游戏名 |
+| `{installDir}` | 安装目录 |
+| `{installDirName}` | 安装目录名 |
+
+`roots` 里的路径**必须真实存在且含存档类文件**才会被采用。
+按 `id` 匹配可覆盖同名内置规则，其他 id 则是追加。
+
+### 存档目录的存储形式
+
+存档路径不存绝对路径，而是存成**令牌 + 相对路径**（例如 `%APPDATA%\Studio\Game`），
+所以换机器后能自动展开。解析不到就在界面上提示「重新定位」，
+由你把令牌映射到本机目录（存在 `games.path_overrides`）。
+
+---
+
+## 使用示例
+
+### 示例 1：Steam 游戏自动备份
+
+Steam 游戏不需要手动配置：
+
+1. 「扫描游戏」→ 勾选目标游戏 → 确认；
+2. 工具从 `appmanifest_*.acf` 读出 AppId，定位到 `userdata/<id>/<appid>/remote`；
+3. 点「立即备份」生成第一个快照；
+4. 之后每次启动/退出该游戏都会自动快照并上传。
+
+### 示例 2：让存档跟着换电脑走
+
+1. 在 A 电脑配置好 WebDAV 并完成一次备份；
+2. 在 B 电脑上装同一个游戏，用**同一组** WebDAV 凭据登录；
+3. B 电脑每 60 秒轮询一次 `index.json`，发现没见过的新快照后自动下载并校验；
+4. 若 B 电脑的存档目录和 A 不同 → 提示「重新定位」，把令牌映射到 B 的实际路径即可。
+
+### 示例 3：两台设备都改过存档
+
+1. A、B 都对同一个游戏做了备份，云端索引把这个游戏标记为 `conflict`；
+2. 界面上「处理冲突」并排展示两侧快照；
+3. 选一边为准，或把两侧都导出成 zip 自行比对。
+
+> 冲突处理**不会删除任何一边**，事后仍可从历史快照里恢复。
+
+### 示例 4：某个游戏规则库失效
+
+1. 添加游戏时目录列表为空；
+2. 点「探测存档目录」→ 「开始探测」；
+3. 去游戏里玩几分钟 → 回到工具点「对比」；
+4. 勾选得分最高的目录 → 完成。
+
+### 示例 5：离线环境使用
+
+不配置 WebDAV 也能用：本地快照、CAS 对象库、恢复、保留策略全部正常工作，
+只是不会上传。托盘里仍可查看队列状态（始终为空）。
+
+---
+
+## 数据与目录布局
+
+### 本地
+
+默认在 `%LOCALAPPDATA%\Reload\`：
+
+```
+%LOCALAPPDATA%\Reload\
+  gamesavesync.db          SQLite（WAL）：games / snapshots / snapshot_files / objects / outbox / devices / settings
+  objects\<hh>\<hash>      内容寻址对象，写入后永不修改（hh = 哈希前两位）
+  objects\tmp\*.part       暂存区，崩溃残留启动时自动清理
+  manifests\<gameId>\<ts>-<sid>.json   清单的可读副本（权威源在 DB）
+  logs\reload-*.log        Serilog 滚动日志
+  covers\steam-<appid>.jpg 封面缓存
+  save-paths.sample.yaml   自定义路径规则样例（复制成 save-paths.yaml 生效）
+```
+
+便携模式（exe 同级有 `portable.flag`）下，以上全部落在 `<exe>\data\`。
+
+### 远端（WebDAV）
+
+在配置的「远程根目录」之下：
+
+```
+<remote-root>/
+  vault.json                                  版本 / 设备 / 加密开关
+  objects/<hh>/<hash>                         不可变对象，重复 PUT 幂等
+  games/<gameId>/snapshots/<ts>-<sid>.json    快照清单（临时名 PUT + MOVE）
+  index.json                                  全局索引（乐观锁 + 设备注册）
+  devices/<id>.json                           设备在线时间
+```
+
+---
+
+## 常见问题
+
+**Q：自动扫描没找到我的游戏？**
+扫描只覆盖 Steam、Epic、GOG、Ubisoft、Xbox/微软商店这 5 个平台（另有手动添加）。
+其它平台请用「手动添加」或「探测模式」。Xbox 侧要求游戏以 MSIX(GDK) 包安装，
+或在 `C:\XboxGames` 这类原生库里存在。
+
+**Q：Xbox 游戏的存档识别不准？**
+云存档归属按「AUMID 包族名 → 应用 ID → Title ID」三级匹配。
+主游戏包会被识别，DLC 附属包和安装目录已消失的残留包会被排除。
+主机端本地存档只有在能按 Title ID 对上时才会挂载。
+
+**Q：连不上 WebDAV？**
+先点「测试连接」。常见原因：
+- 服务地址填到了站点根目录而不是用户目录（Nextcloud 需要到 `remote.php/dav/files/<user>`）；
+- 用了主账号密码而不是应用密码；
+- 服务端不支持 `PROPFIND` 或 `MOVE`——工具会自动退化，但部分服务端需要手动开启。
+
+**Q：日志在哪？**
+`%LOCALAPPDATA%\Reload\logs\` 下的滚动文件。应用内「诊断」页也能看最近 200 条，
+并能导出已脱敏的诊断包。
+
+**Q：删掉应用会丢存档吗？**
+数据目录是独立的。删除程序不会删除 `gamesavesync.db` 和 `objects\`。
+但**卸载前请确认远端已有完整快照**——本地快照不构成备份。
+
+**Q：能加密存档吗？**
+当前版本**没有**端到端加密。远端看到的是明文存档内容。
+凭据（WebDAV 密码）用 DPAPI 加密存本地，传输安全取决于你用的 HTTPS。
+
+**Q：多台设备会不会互相覆盖？**
+不会。所有快照都保留，云端索引标记冲突而不是覆盖，冲突由你决定用哪一边。
+
+**Q：占用空间会一直涨吗？**
+快照按内容寻址去重，相同文件只存一份。GFS 策略默认保留最近 20 + 每日 7 + 每周 4，
+在「清理旧快照」里可以预览并清理。
+
+**Q：能多用户/多电脑共享同一个远端吗？**
+可以。远端按 `RemoteRoot` 分目录，每台设备注册自己的 `devices/<id>.json`。
+建议给不同用途配置不同的 `RemoteRoot`。
+
+**Q：程序改名了，老数据还在吗？**
+在。首次启动会自动把 `%LOCALAPPDATA%\GameSaveSync` 迁移到 `%LOCALAPPDATA%\Reload`，
+开机自启的注册表项也会同步改名并清理旧值。
+
+---
+
+## 从源码构建
+
+### 前置条件
+
+- .NET 8 SDK（或更新的 SDK，能 target net8.0）
+- Windows x64
+
+### 构建与测试
+
+```powershell
+dotnet build .\GameSaveSync.sln -c Debug
+dotnet test  .\GameSaveSync.sln
+```
+
+### 发布单文件产物
+
+```powershell
+dotnet publish .\src\GameSaveSync.App\GameSaveSync.App.csproj `
+    -c Release -r win-x64 `
+    -p:SelfContained=true `
+    -p:PublishSingleFile=true `
+    -p:IncludeNativeLibrariesForSelfExtract=true `
+    -p:EnableCompressionInSingleFile=true `
+    -p:DebugType=none `
+    -o .\publish\win-x64
+```
+
+产物：`publish\win-x64\Reload.exe`（自包含单文件，约 74 MB）。
+
+> **发布前请先退出正在运行的 Reload.exe**，否则单文件打包器无法覆盖被占用的 exe。
+
+### 调试钩子
+
+设置环境变量 `RELOAD_OPEN_DIALOG=wizard` 可在启动时直接打开「扫描游戏」向导，
+便于 UI 自动化测试。
+
+---
 
 ## 工程结构
 
 ```
 GameSaveSync.sln
-├─ src/GameSaveSync.Core            核心引擎（net8.0，无 WPF / 无 Win32 API，可单测）
-│   ├─ Abstractions/                IFileSystem、IHashService、IHasher
-│   ├─ Configuration/AppPaths       数据目录布局（objects / manifests / logs / db）
-│   ├─ Detection/                   指纹缓存、稳定性门（400ms 复检 + 退避）
+├─ src/GameSaveSync.Core            核心引擎（net8.0，无 WPF / 无 Win32 API，可独立单测）
+│   ├─ Abstractions/                IFileSystem、IHashService、IClock、IAppLogger
+│   ├─ Configuration/               AppPaths —— 数据目录布局
 │   ├─ Covers/                      封面缓存（Steam CDN + 本机缓存）
-│   ├─ Diagnostics/                 IAppLogger（环形缓冲）、IClock、诊断包（脱敏导出）
-│   ├─ Locator/                     平台发现（VDF/JSON/注册表）、规则库（YAML）、引擎识别、探测模式
-│   ├─ Hashing/Blake3HashService    BLAKE3，64 位小写十六进制
+│   ├─ Detection/                   指纹缓存、稳定性门（400ms 复检 + 退避）
+│   ├─ Diagnostics/                 环形缓冲日志、诊断包导出（脱敏）
+│   ├─ Hashing/                     BLAKE3，64 位小写十六进制
+│   ├─ Locator/                     平台发现、YAML 规则库、引擎识别、Xbox 定位器
 │   ├─ Models/                      Game / SaveRoot / Snapshot / SnapshotManifest / 枚举
+│   ├─ Online/                      PCGamingWiki 存档路径查询
 │   ├─ Paths/                       令牌展开与反向令牌化、Glob 匹配、存档根解析、路径覆盖
 │   ├─ Probe/                       探测模式（指纹 → 运行后对比 → 打分）
-│   ├─ Remote/                      index.json 模型与合并状态机、索引服务、轮询器、导入器、冲突视图
-│   ├─ Retention/                   GFS 保留策略（预览 + 执行）
-│   ├─ Scheduling/                  进程/文件事件抽象、匹配规则、SnapshotScheduler（触发器编排）
-│   ├─ Snapshots/                   SnapshotService（快照）、清单序列化与本地副本
-│   ├─ Storage/                     SQLite（WAL）+ 仓储 + CAS 对象库 + outbox/指纹仓储
+│   ├─ Remote/                      index.json 模型与合并状态机、索引服务、轮询器、导入器
 │   ├─ Restore/                     RestorePlan / RestoreService（两阶段 + 原子替换）
-│   └─ Sync/                        IRemoteStore、outbox、OutboxProcessor、UploadService
-├─ src/GameSaveSync.Infrastructure  PhysicalFileSystem（\\?\ 长路径）、DPAPI、进程轮询+WMI、目录监视、资源探针、开机自启、Steam/UWP 注册表、封面下载
-├─ src/GameSaveSync.WebDav          WebDavClient（MKCOL 逐级/临时名+MOVE/证书固定/限流）、WebDavRemoteStore、Providers（Generic/Nextcloud/RateLimited）
-├─ src/GameSaveSync.App             WPF + MVVM + DI + 单实例 + 托盘 + Serilog；Themes/ 为 MD3 令牌与控件，
-│                                   Views/Pages 为卡片墙/诊断/设置，WizardWindow/ProbeWindow 为向导与探测
-└─ tests/GameSaveSync.Tests         xUnit：145 个用例，含进程内 WebDAV 服务器（ETag/412/PROPFIND/分块）、真机监视与 31 条验收
+│   ├─ Retention/                   GFS 保留策略（预览 + 执行）
+│   ├─ Scheduling/                  进程/文件事件抽象、SnapshotScheduler（触发器编排）
+│   ├─ Security/                    ICredentialProtector
+│   ├─ Snapshots/                   SnapshotService、清单序列化
+│   ├─ Storage/                     SQLite（WAL）+ 仓储 + CAS 对象库 + outbox
+│   ├─ Sync/                        IRemoteStore、OutboxProcessor、UploadService
+│   └─ Theming/                     MD3 调色板
+├─ src/GameSaveSync.Infrastructure  PhysicalFileSystem（\\?\ 长路径）、DPAPI、进程轮询+WMI、
+│                                   目录监视、资源探针、开机自启、Steam/UWP 注册表、封面下载
+├─ src/GameSaveSync.WebDav          WebDavClient（MKCOL 逐级 / 临时名 + MOVE / 证书固定 / 限流）、
+│                                   WebDavRemoteStore、Providers（generic / nextcloud-chunked / rate-limited）
+├─ src/GameSaveSync.App             WPF + MVVM + DI + 单实例 + 托盘 + Serilog
+│                                   Themes/ 为 MD3 令牌与控件，Views/Pages 为卡片墙 / 诊断 / 设置，
+│                                   WizardWindow / ProbeWindow 为向导与探测
+└─ tests/GameSaveSync.Tests         xUnit：320 个用例，含进程内 WebDAV 服务器
+                                    （ETag / 412 / PROPFIND / 分块）、真机监视与验收测试
 ```
 
-## 构建与测试
+### 设计约束
 
-本机原先只有 .NET 运行时、没有 SDK，因此 SDK 装在用户目录（不需要管理员）：
+这些约束贯穿整个代码库，是这个工具能「放心交给后台自动跑」的基础：
 
-```
-C:\Users\yang\.dotnet-sdk\sdk8\dotnet.exe
-```
+1. **绝不用 mtime 判断内容是否变化** —— 一律 BLAKE3；mtime/size 只做稳定性判定与预过滤。
+2. **绝不直接信事件** —— 读文件前后各 stat 一次，不稳定就重读（最多 3 次），仍不稳定则跳过。
+3. **绝不产生半截对象** —— 先写 `objects/tmp/*.part` → 算哈希 → rename 进 CAS。
+4. **绝不产生空快照** —— 目录被删/清空则标记「需重新定位」并报错。
+5. **恢复前必打 `pre_restore` 快照**；目标文件先写临时文件 → 校验哈希 → 原子替换。
+6. **路径全链路 `\\?\`**，不跟随 junction/symlink。
+7. **凭据只用 DPAPI 加密存本地**，日志中不出现明文；自签名证书只按指纹放行。
+8. **网络操作一律先入 outbox 再执行**，进程在任意点被杀都不丢待办。
+9. **快照全局并发度 1**，后台路径线程优先级 `IDLE`，绝不抢游戏 IO。
+10. **上行顺序对象 → 清单 → 索引**，前置依赖未就绪就让该项延后。
+11. **任何合并分支都不删除快照**。
+12. **不猜路径** —— 令牌解析不到就标记「需重新定位」，等用户显式映射。
+13. **便携模式不写注册表**，系统集成显式禁用。
+
+---
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request。
+
+**提 Issue 前请先准备诊断包**：「诊断」页 → 「导出诊断包」，
+生成的 zip 已自动脱敏（凭据、令牌、具体路径都会替换掉），可以直接附在 Issue 里。
+
+**提交 PR 前请确认：**
 
 ```powershell
-# 构建 + 测试
-& "C:\Users\yang\.dotnet-sdk\sdk8\dotnet.exe" build .\GameSaveSync.sln -c Debug
-& "C:\Users\yang\.dotnet-sdk\sdk8\dotnet.exe" test  .\GameSaveSync.sln
-
-# 自包含单文件发布（win-x64，约 70 MB）
-& "C:\Users\yang\.dotnet-sdk\sdk8\dotnet.exe" publish .\src\GameSaveSync.App\GameSaveSync.App.csproj `
-    -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true `
-    -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true `
-    -p:DebugType=none -o .\publish\win-x64
+dotnet build .\GameSaveSync.sln -c Debug   # 编译零警告（TreatWarningsAsErrors 已开启）
+dotnet test  .\GameSaveSync.sln              # 全部用例通过
 ```
 
-启动：`.\publish\win-x64\GameSaveSync.exe`（或 `dotnet run --project .\src\GameSaveSync.App`）。
-数据目录：`%LOCALAPPDATA%\GameSaveSync`（`gamesavesync.db`、`objects/`、`manifests/`、`logs/`、`covers/`）；
-便携模式：exe 同级放 `portable.flag`，数据改到 `<exe>\data`。
+**约定：**
 
-## 本机布局
+- 遵循现有代码风格，保持 `Core` 层不依赖 WPF / Win32（否则无法独立单测）。
+- 新功能尽量补测试；`tests/GameSaveSync.Tests/` 下按功能分组命名。
+- 不要提交 `publish/`、`bin/`、`obj/` 等构建产物（`.gitignore` 已排除）。
+- 提交信息用中文说明改动动机与影响范围。
 
-```
-%LOCALAPPDATA%\GameSaveSync\
-  gamesavesync.db           SQLite（WAL），games / snapshots / snapshot_files / objects / outbox / devices / settings
-  objects\<hh>\<hash>       内容寻址对象，只写一次，写入后永不修改
-  objects\tmp\*.part        暂存区（崩溃残留启动时清理）
-  manifests\<gameId>\<ts>-<sid>.json   清单的人眼可读副本（权威源是 DB）
-  logs\gamesavesync-*.log   Serilog 滚动文件
-  covers\steam-<appid>.jpg  封面缓存
-  save-paths.sample.yaml    自定义路径规则样例（复制成 save-paths.yaml 生效）
-```
+---
 
-远端（WebDAV，`RemoteRoot` 之下）：
+## 许可证
+
+本项目采用 **[MIT 许可证](LICENSE)**。
 
 ```
-vault.json                                  版本/设备/加密开关（M1 已创建）
-objects/<hh>/<hash>                          不可变，重复 PUT 幂等
-games/<gameId>/snapshots/<ts>-<sid>.json     清单（临时名 PUT + MOVE）
-index.json                                   全局索引（乐观锁 + 设备注册）
+Copyright (c) 2026 Reload contributors
 ```
 
-## 不可协商的设计约束（已落地）
+简而言之：你可以自由使用、修改、分发和商用本软件（包括闭源商用），
+唯一的义务是在副本中保留版权声明和许可证声明。
+本软件按「现状」提供，不附带任何明示或默示的担保。
 
-1. **绝不用 mtime 判断内容是否变化**：一律 BLAKE3；mtime/size 只做稳定性判定与 L2 预过滤。
-2. **绝不直接信事件**：读文件前后各 stat 一次，size/mtime 变了就重读（最多 3 次），仍不稳定则跳过该文件。
-3. **绝不产生半截对象**：先写 `objects/tmp/*.part` → 算哈希 → rename 进 CAS；进程被杀最多留 tmp。
-4. **绝不产生空快照**：目录被删/清空 → 标记「需重新定位」并报错，不写空清单。
-5. **恢复前必打 pre_restore 快照**；目标文件先写临时文件 → 校验哈希 → `MoveFileEx(REPLACE_EXISTING)` 原子替换。
-6. **只读/隐藏/系统属性**：替换前清除，替换后按「目标原有属性 ∪ 快照属性」复原。
-7. **路径全链路 `\\?\`**，不跟随 junction/symlink，保留原始大小写、比较用 lower-case 归一化。
-8. **凭据只用 DPAPI 加密存 SQLite**，任何日志不出现明文；自签名证书只按指纹放行，不做全局跳过。
-9. **网络操作一律先入 outbox 再执行**，进程在任意点被杀都不丢待办；对象按 hash 命名，重复执行幂等。
-10. **快照全局并发度 1**，后台路径线程优先级 `IDLE`、1 MB 块、块间 50 ms，绝不抢游戏 IO。
-11. **上行顺序对象 → 清单 → 索引**，前置依赖未就绪就让出队项延后（绝不让索引指向不存在的东西）。
-12. **任何合并分支都不删除快照**；冲突只影响"默认推荐哪个版本"。
-13. **不猜路径**：令牌解析不到就标记"需重新定位"，等用户显式映射。
-14. **识别结果必须可解释**：自动发现的每个存档根都来自"平台目录 / 规则模板 / 引擎雷达"，且目录必须存在并含存档类文件；不确定就让用户探测或手动选。
-15. **便携模式不写注册表**：数据在程序目录，开机自启等系统集成显式禁用。
-
-## 文档
-
-- `docs/M1-交付说明.md`：M1 启动方式、8 条验收实测、M2 预留清单、偏差。
-- `docs/M2-交付说明.md`：M2 六块实现、8 条验收实测（含 outbox 状态机/GFS 规则）、需要真机补测的两项。
-- `docs/M3-交付说明.md`：M3 协议实现、冲突合并状态机、7 条验收实测、seq 语义修正说明。
-- `docs/M4-交付说明.md`：M4 六块实现、MD3 设计令牌与页面、6 条验收实测、与规格的 6 处偏差、真机补测清单。
-- `docs/M4.5-交付说明.md`：更名 Reload 的迁移细节、主题系统架构（DynamicResource 即时换肤）、设置增强、图标体系。
-- `docs/自测清单.md`：手工自测步骤（中文/emoji/长路径/只读/大文件/断网/强杀 + M2/M3/M4 自动化项）。
-- `docs/test-run.log`：一次完整测试运行的原始输出（128 个用例）。
+**第三方组件**：本项目使用了 .NET 8（MIT）、CommunityToolkit.Mvvm（MIT）、
+Microsoft.Extensions.DependencyInjection（MIT）、Serilog（Apache-2.0）、
+BLAKE3 参考实现（CC0 / Apache-2.0 双许可）以及 Microsoft.Data.Sqlite（MIT）。
+各组件的许可证详见其官方仓库。

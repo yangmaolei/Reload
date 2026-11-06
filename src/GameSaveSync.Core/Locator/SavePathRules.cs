@@ -182,7 +182,7 @@ public sealed class SavePathRuleSet
 
     /// <summary>给用户抄的样例：同 id 会覆盖内置规则，新 id 追加。</summary>
     public const string SampleYaml = """
-        # GameSaveSync 自定义存档路径规则
+        # Reload 自定义存档路径规则
         # 用法：把本文件改名为 save-paths.yaml 放在数据目录（设置页有完整路径），重启后生效。
         # 规则按游戏名通配符匹配，roots 支持 %DOCUMENTS% %USERPROFILE% %APPDATA% %LOCALAPPDATA% %SAVEDGAMES%
         # 以及 {name} {installDir} {installDirName} 占位符。目录必须真实存在且包含存档类文件才会被采用。

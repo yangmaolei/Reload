@@ -275,7 +275,7 @@ public sealed class DiagnosticsService
         WriteEntry(archive, "logs.txt", redactor.Redact(FormatLogs(report.RecentLogs)));
         WriteEntry(archive, "diagnostics.json", redactor.Redact(JsonSerializer.Serialize(report, JsonOptions)));
         WriteEntry(archive, "README.txt",
-            "GameSaveSync 诊断包\r\n\r\n" +
+            "Reload 诊断包\r\n\r\n" +
             "report.txt      汇总（存储、队列、远端配置）\r\n" +
             "logs.txt        最近 200 条日志\r\n" +
             "diagnostics.json 原始结构，便于排查\r\n\r\n" +

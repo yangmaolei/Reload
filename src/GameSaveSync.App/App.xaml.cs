@@ -60,7 +60,7 @@ public partial class App : Application
         {
             var logger = _services?.GetService<IAppLogger>();
             logger?.Error("未处理的 UI 异常", args.Exception);
-            MessageBox.Show($"发生未处理的错误：{args.Exception.Message}", "GameSaveSync", MessageBoxButton.OK,
+            MessageBox.Show($"发生未处理的错误：{args.Exception.Message}", "Reload", MessageBoxButton.OK,
                 MessageBoxImage.Error);
             args.Handled = true;
         };
@@ -110,7 +110,7 @@ public partial class App : Application
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"启动失败：{ex}", "GameSaveSync", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"启动失败：{ex}", "Reload", MessageBoxButton.OK, MessageBoxImage.Error);
             Shutdown(-1);
         }
     }
@@ -370,7 +370,7 @@ public partial class App : Application
         {
             var answer = MessageBox.Show(
                 $"还有 {pending} 项待上传，退出后会在下次启动时继续。确定要退出吗？",
-                "GameSaveSync",
+                "Reload",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 

@@ -88,7 +88,7 @@ public sealed class WebDavClient : IDisposable
 
         if (_http.DefaultRequestHeaders.UserAgent.Count == 0)
         {
-            _http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GameSaveSync", "0.1"));
+            _http.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Reload", "1.0"));
         }
     }
 

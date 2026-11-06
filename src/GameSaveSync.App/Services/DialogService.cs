@@ -126,7 +126,7 @@ public sealed class DialogService : IDialogService
         return window.ShowDialog() == true ? viewModel.SelectedDirectories : null;
     }
 
-    public void ShowInfo(string message, string title = "GameSaveSync") =>
+    public void ShowInfo(string message, string title = "Reload") =>
         MessageWindow.Info(Owner, title, message);
 
     public void ShowError(string message, string title = "出错了") =>

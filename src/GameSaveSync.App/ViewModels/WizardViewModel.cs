@@ -99,7 +99,7 @@ public sealed partial class WizardViewModel : ObservableObject
     private string username = string.Empty;
 
     [ObservableProperty]
-    private string remoteRoot = "GameSaveSync";
+    private string remoteRoot = AppPaths.DefaultRemoteRoot;
 
     [ObservableProperty]
     private string certificateThumbprint = string.Empty;
@@ -413,7 +413,7 @@ public sealed partial class WizardViewModel : ObservableObject
     private WebDavOptions BuildOptions() => new()
     {
         BaseUrl = BaseUrl?.Trim() ?? string.Empty,
-        RemoteRoot = string.IsNullOrWhiteSpace(RemoteRoot) ? "GameSaveSync" : RemoteRoot.Trim(),
+        RemoteRoot = string.IsNullOrWhiteSpace(RemoteRoot) ? AppPaths.DefaultRemoteRoot : RemoteRoot.Trim(),
         Username = string.IsNullOrWhiteSpace(Username) ? null : Username.Trim(),
         Password = string.IsNullOrEmpty(PasswordInput) ? _loaded.Password : PasswordInput,
         TrustedCertificateThumbprint = string.IsNullOrWhiteSpace(CertificateThumbprint)

@@ -20,7 +20,7 @@ public sealed class HttpCoverDownloader : ICoverDownloader, IDisposable
             Timeout = TimeSpan.FromSeconds(8),
         };
 
-        if (!_client.DefaultRequestHeaders.UserAgent.TryParseAdd("GameSaveSync/1.0"))
+        if (!_client.DefaultRequestHeaders.UserAgent.TryParseAdd("Reload/1.0"))
         {
             // 已经设置过就不管
         }
