@@ -213,16 +213,16 @@ public sealed class M4SupportTests : IDisposable
         Assert.Null(CoverService.BuildSteamCoverUri("not-a-number"));
 
         var game = new Game { Name = "Spacewar", Source = GameSource.Steam, ExternalId = "480" };
-        var cachedPath = Path.Combine(paths.CoversDir, "steam-480.jpg");
+        var cachedPath = Path.Combine(paths.CoversDir, "steam-480-s.jpg");
         File.WriteAllBytes(cachedPath, TestEnvironment.Bytes(32, seed: 9));
 
         var service = new CoverService(paths, _fs, downloader: null, _logger);
-        Assert.Equal(cachedPath, await service.GetAsync(game, CancellationToken.None));
+        Assert.Equal(cachedPath, await service.GetAsync(game, PosterKind.Square, CancellationToken.None));
 
         var game2 = new Game { Name = "Other", Source = GameSource.Steam, ExternalId = "570" };
         var downloader = new FakeDownloader(TestEnvironment.Bytes(64, seed: 10));
         var service2 = new CoverService(paths, _fs, downloader, _logger);
-        var downloaded = await service2.GetAsync(game2, CancellationToken.None);
+        var downloaded = await service2.GetAsync(game2, PosterKind.Portrait, CancellationToken.None);
 
         Assert.NotNull(downloaded);
         Assert.True(File.Exists(downloaded));

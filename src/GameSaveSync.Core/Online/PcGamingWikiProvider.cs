@@ -32,9 +32,19 @@ public sealed class PcGamingWikiProvider : IOnlineSavePathProvider, IDisposable
 
     public async Task<IReadOnlyList<OnlineSavePath>> QueryAsync(string gameName, CancellationToken ct)
     {
+        var result = await QueryDetailedAsync(gameName, ct).ConfigureAwait(false);
+        return result.Succeeded ? result.Paths : Array.Empty<OnlineSavePath>();
+    }
+
+    /// <summary>
+    /// 带状态明细的查询：把"站点不可达/解析失败"与"页面不存在"区分开，
+    /// 让"刷新存档路径"能给用户明确的失败原因，而不是笼统的"没查到"。
+    /// </summary>
+    public async Task<OnlineSavePathQueryResult> QueryDetailedAsync(string gameName, CancellationToken ct)
+    {
         if (string.IsNullOrWhiteSpace(gameName))
         {
-            return Array.Empty<OnlineSavePath>();
+            return OnlineSavePathQueryResult.Fail("游戏名称为空。");
         }
 
         try
@@ -42,22 +52,27 @@ public sealed class PcGamingWikiProvider : IOnlineSavePathProvider, IDisposable
             var title = await SearchAsync(gameName, ct).ConfigureAwait(false);
             if (title is null)
             {
-                return Array.Empty<OnlineSavePath>();
+                // 查询本身成功，只是站内没有这个游戏的页面
+                return OnlineSavePathQueryResult.Ok(Array.Empty<OnlineSavePath>());
             }
 
             var wikitext = await FetchWikitextAsync(title, ct).ConfigureAwait(false);
             if (wikitext is null)
             {
-                return Array.Empty<OnlineSavePath>();
+                return OnlineSavePathQueryResult.Fail($"读取 PCGamingWiki 页面「{title}」失败。");
             }
 
             var sourceUrl = $"https://www.pcgamingwiki.com/wiki/{Uri.EscapeDataString(title.Replace(' ', '_'))}";
-            return PcGamingWikiParser.Parse(wikitext, gameName, sourceUrl);
+            var paths = PcGamingWikiParser.Parse(wikitext, gameName, sourceUrl);
+            return OnlineSavePathQueryResult.Ok(paths, sourceUrl);
         }
-        catch (Exception ex) when (ex is not OperationCanceledException)
+        catch (OperationCanceledException)
         {
-            // 静默降级：外部服务不可用不影响备份
-            return Array.Empty<OnlineSavePath>();
+            throw;
+        }
+        catch (Exception ex)
+        {
+            return OnlineSavePathQueryResult.Fail(ex.Message);
         }
     }
 

@@ -459,6 +459,7 @@ public partial class App : Application
         services.AddSingleton<ICoverDownloader, HttpCoverDownloader>();
         services.AddSingleton<GameSaveSync.Core.Online.IOnlineSavePathProvider, GameSaveSync.Core.Online.PcGamingWikiProvider>();
         services.AddSingleton<CoverService>();
+        services.AddSingleton<GameSaveSync.Core.Online.SavePathRefreshService>();
         services.AddSingleton(sp => new DiagnosticsService(
             sp.GetRequiredService<SqliteDatabase>(),
             sp.GetRequiredService<IObjectRepository>(),
