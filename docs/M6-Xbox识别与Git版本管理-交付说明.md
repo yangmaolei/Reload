@@ -88,7 +88,7 @@
 **单元测试（22 条新增）**
 
 ```bash
-cd C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync
+cd C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\Reload
 "C:\Users\yang\.dotnet-sdk\sdk8\dotnet.exe" test GameSaveSync.sln --filter "FullyQualifiedName~M6XboxTests"
 ```
 
@@ -185,7 +185,7 @@ f81f31f  docs(m6): 补充 Xbox 识别与 Git 版本管理交付说明，更新�
 ### 2.5 验证方式
 
 ```bash
-cd C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync
+cd C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\Reload
 
 git log --oneline          # 首次提交
 git status                 # 工作区应干净
@@ -242,7 +242,7 @@ f81f31f  docs(m6): 补充 Xbox 识别与 Git 版本管理交付说明，更新�
 ### 2.7 后续使用
 
 ```bash
-cd C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync
+cd C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\Reload
 git push                      # 凭据已在 Windows 凭据管理器，直接推
 git pull                      # 拉取
 git clone https://github.com/yangmaolei/Reload.git   # 克隆
