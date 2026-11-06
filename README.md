@@ -141,6 +141,33 @@ BLAKE3 内容比对。配合 3 秒去抖与 400 毫秒复检，**内容没变就
 
 > 该产物是 **win-x64 自包含单文件**（约 74 MB），无需另外安装 .NET 运行时。
 
+#### ⚠️ 首次运行会弹出「Windows 已保护你的电脑」
+
+这是 **Microsoft Defender SmartScreen** 的拦截提示，**不是病毒，也不是程序出错**。
+原因是本项目**没有购买代码签名证书**，Windows 无法验证发布者身份
+（提示里会显示「发布者：发布者未知」），而 SmartScreen 对「未知发布者 + 低下载量」的程序
+默认会拦一道。
+
+**处理办法（选一个）：**
+
+1. **点「仍要运行」** —— 最直接。SmartScreen 记住这个文件后不会再提示。
+2. **点「更多信息」→「仍要运行」** —— 如果窗口里有这个选项，走它更规范。
+3. **用命令行解除下载阻止标记**（解压后执行一次即可，之后双击就不再提示）：
+
+   ```powershell
+   Unblock-File -Path .\Reload.exe
+   ```
+
+4. **添加排除项**（如果你打算长期用这台机器跑自动备份）：
+
+   ```powershell
+   Add-MpPreference -ExclusionPath "C:\你的解压目录"
+   ```
+
+> **怎么确认文件是干净的**：Release 页同时提供 `SHA256SUMS.txt`，
+> 用 `Get-FileHash .\Reload.exe -Algorithm SHA256` 比对哈希值即可。
+> 这比"看发布者是不是未知"可靠得多——即使文件被替换过，哈希也会对不上。
+
 ### 方式二：便携模式
 
 把 `portable.flag` 放在 `Reload.exe` 同级目录，数据会存到 `<exe>\data`，
@@ -366,6 +393,12 @@ Steam 游戏不需要手动配置：
 ---
 
 ## 常见问题
+
+**Q：启动时弹出「Windows 已保护你的电脑」，是病毒吗？**
+不是。这是 SmartScreen 因为程序**没有代码签名**而拦截的默认提示。
+点「仍要运行」即可，或解压后执行一次 `Unblock-File -Path .\Reload.exe`。
+想确认文件未被篡改，用 Release 页的 `SHA256SUMS.txt` 比对哈希。
+详见[安装章节](#方式一下载-release-产物推荐)。
 
 **Q：自动扫描没找到我的游戏？**
 扫描只覆盖 Steam、Epic、GOG、Ubisoft、Xbox/微软商店这 5 个平台（另有手动添加）。
