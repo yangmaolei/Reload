@@ -1,0 +1,150 @@
+<UserControl x:Class="GameSaveSync.App.Views.Controls.PosterSwitcher"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:GameSaveSync.App.ViewModels"
+             xmlns:conv="clr-namespace:GameSaveSync.App.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:GameListItemViewModel}">
+
+    <UserControl.Resources>
+        <conv:PosterIndicatorConverter x:Key="PosterIndicator" />
+        <conv:PosterHeightConverter x:Key="PosterHeight" />
+
+        <!-- 切换按钮：小圆角方形，浮在图片左右两侧 -->
+        <Style x:Key="SwitchButton" TargetType="Button">
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" CornerRadius="8"
+                                Background="{DynamicResource Md3.SurfaceContainerHighest}"
+                                BorderBrush="{DynamicResource Md3.OutlineVariant}"
+                                BorderThickness="1">
+                            <TextBlock x:Name="Glyph" Text="{TemplateBinding Content}"
+                                       FontFamily="{StaticResource Md3.IconFont}" FontSize="14"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource Md3.OnSurface}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{DynamicResource Md3.PrimaryContainer}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bg" Property="Opacity" Value="0.75" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bg" Property="Opacity" Value="0.35" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 分页指示点：选中态用主色 -->
+        <Style x:Key="IndicatorDot" TargetType="Border">
+            <Setter Property="Width" Value="6" />
+            <Setter Property="Height" Value="6" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="Margin" Value="3,0,0,0" />
+            <Setter Property="Background" Value="{DynamicResource Md3.Outline}" />
+            <Style.Triggers>
+                <DataTrigger Value="True">
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter="{StaticResource PosterIndicator}">
+                            <Binding />
+                            <Binding Path="SelectedPosterKind" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property="Background" Value="{DynamicResource Md3.Primary}" />
+                    <Setter Property="Width" Value="16" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- 图片区：底板 + 描边 + 图片（Uniform 等比缩放，不裁切不变形） -->
+        <Border x:Name="PosterFrame"
+                Grid.Row="0"
+                Background="{DynamicResource Md3.SurfaceContainerLowest}"
+                BorderBrush="{DynamicResource Md3.OutlineVariant}"
+                BorderThickness="1"
+                CornerRadius="12"
+                ClipToBounds="True">
+            <Grid>
+                <!-- 首字母色块兜底：只在没有海报时显示。
+                     有海报时必须隐藏，否则图片等比缩放后没填满容器，
+                     露出的色块会被误看成图片的一部分。 -->
+                <Border x:Name="FallbackTile"
+                        CornerRadius="12"
+                        Visibility="{Binding HasCover, Converter={StaticResource InverseBool}}"
+                        Background="{Binding Name, Converter={StaticResource NameToBrush}}">
+                    <TextBlock Text="{Binding Name, Converter={StaticResource Initials}}"
+                               FontSize="26" FontWeight="SemiBold"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="{Binding Name, Converter={StaticResource NameToBrush}, ConverterParameter=foreground}" />
+                </Border>
+
+                <!-- 海报：等比缩放（Uniform），高度按形态宽高比自适应，窄屏下不溢出 -->
+                <Image x:Name="PosterImage"
+                       Source="{Binding CoverPath}"
+                       Stretch="Uniform"
+                       Visibility="{Binding HasCover, Converter={StaticResource BoolToVisibility}}">
+                    <Image.Height>
+                        <MultiBinding Converter="{StaticResource PosterHeight}">
+                            <Binding Path="ActualWidth" ElementName="PosterFrame" />
+                            <Binding Path="SelectedPosterKind" />
+                        </MultiBinding>
+                    </Image.Height>
+                </Image>
+
+                <!-- 左右切换按钮 -->
+                <Button x:Name="PrevButton"
+                        Style="{StaticResource SwitchButton}"
+                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                        Margin="6,0,0,0"
+                        Content="&#xE72B;"
+                        ToolTip="上一张海报"
+                        Visibility="{Binding HasMultiplePosters, Converter={StaticResource BoolToVisibility}}"
+                        Command="{Binding SwitchPreviousPosterCommand}" />
+                <Button x:Name="NextButton"
+                        Style="{StaticResource SwitchButton}"
+                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Margin="0,0,6,0"
+                        Content="&#xE72A;"
+                        ToolTip="下一张海报"
+                        Visibility="{Binding HasMultiplePosters, Converter={StaticResource BoolToVisibility}}"
+                        Command="{Binding SwitchNextPosterCommand}" />
+            </Grid>
+        </Border>
+
+        <!-- 分页指示器：点数 = 可用海报数 -->
+        <ItemsControl x:Name="IndicatorRow"
+                      Grid.Row="1"
+                      Margin="0,8,0,0"
+                      HorizontalAlignment="Center"
+                      Visibility="{Binding HasMultiplePosters, Converter={StaticResource BoolToVisibility}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource IndicatorDot}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

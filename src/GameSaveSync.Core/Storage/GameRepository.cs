@@ -20,7 +20,7 @@ public sealed class GameRepository : IGameRepository
 {
     private const string SelectColumns = """
         id, name, source, external_id, install_dir, exe_names, save_roots, cover_url,
-        enabled, retention, needs_relocate, created_at, updated_at, path_overrides
+        enabled, retention, needs_relocate, created_at, updated_at, path_overrides, poster_kind
         """;
 
     private readonly SqliteDatabase _database;
@@ -62,10 +62,10 @@ public sealed class GameRepository : IGameRepository
             command.CommandText = """
                 INSERT INTO games(id, name, source, external_id, install_dir, exe_names, save_roots,
                                   cover_url, enabled, retention, needs_relocate, created_at, updated_at,
-                                  path_overrides)
+                                  path_overrides, poster_kind)
                 VALUES($id, $name, $source, $externalId, $installDir, $exeNames, $saveRoots,
                        $coverUrl, $enabled, $retention, $needsRelocate, $createdAt, $updatedAt,
-                       $pathOverrides)
+                       $pathOverrides, $posterKind)
                 ON CONFLICT(id) DO UPDATE SET
                   name = excluded.name,
                   source = excluded.source,
@@ -78,7 +78,8 @@ public sealed class GameRepository : IGameRepository
                   retention = excluded.retention,
                   needs_relocate = excluded.needs_relocate,
                   updated_at = excluded.updated_at,
-                  path_overrides = excluded.path_overrides
+                  path_overrides = excluded.path_overrides,
+                  poster_kind = excluded.poster_kind
                 """;
             command.Parameters.AddWithValue("$id", game.Id.ToString("D"));
             command.Parameters.AddWithValue("$name", game.Name);
@@ -96,6 +97,7 @@ public sealed class GameRepository : IGameRepository
             command.Parameters.AddWithValue(
                 "$pathOverrides",
                 game.PathOverrides.Count == 0 ? (object)DBNull.Value : JsonColumns.Serialize(game.PathOverrides));
+            command.Parameters.AddWithValue("$posterKind", (object?)game.PosterKind ?? DBNull.Value);
             await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
         }, ct);
     }
@@ -165,5 +167,9 @@ public sealed class GameRepository : IGameRepository
             ? JsonColumns.Deserialize<Dictionary<string, string>>(reader.GetString(13))
               ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+        // poster_kind 是后加的列，老库里没有这一列时 FieldCount 会更小
+        PosterKind = reader.FieldCount > 14 && !reader.IsDBNull(14)
+            ? reader.GetString(14)
+            : null,
     };
 }

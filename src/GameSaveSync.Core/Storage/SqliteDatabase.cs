@@ -205,6 +205,8 @@ internal static class Migrations
     public static void Apply(Microsoft.Data.Sqlite.SqliteConnection connection)
     {
         AddColumnIfMissing(connection, "games", "path_overrides", "TEXT");
+        // 海报形态偏好（竖屏长图 / 方形头图），纯本机 UI 状态，不参与同步
+        AddColumnIfMissing(connection, "games", "poster_kind", "TEXT");
         RebuildSnapshotFilesIfPrimaryKeyIsOld(connection);
     }
 

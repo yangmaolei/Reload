@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GameSaveSync.Core.Diagnostics;
 using GameSaveSync.App.Views;
+using GameSaveSync.Core.Covers;
 using GameSaveSync.Core.Models;
 using GameSaveSync.Core.Restore;
 using GameSaveSync.Core.Remote;
@@ -114,12 +116,133 @@ public sealed partial class GameListItemViewModel : ObservableObject
     [ObservableProperty]
     private string? coverPath;
 
+    /// <summary>
+    /// 当前形态可用的海报（形态 → 本地路径）。为空表示没有可用海报，UI 退回首字母色块。
+    /// </summary>
+    [ObservableProperty]
+    private IReadOnlyDictionary<PosterKind, string> availablePosters =
+        new Dictionary<PosterKind, string>();
+
+    /// <summary>用户选中的海报形态。</summary>
+    [ObservableProperty]
+    private PosterKind selectedPosterKind = PosterKind.Portrait;
+
     [ObservableProperty]
     private string metaText = string.Empty;
 
     public bool HasCover => !string.IsNullOrWhiteSpace(CoverPath);
 
+    /// <summary>可切换的海报数量（1 表示没有可切换的第二张）。</summary>
+    public int PosterCount => AvailablePosters.Count;
+
+    /// <summary>是否需要显示切换控件（至少两种形态可用）。</summary>
+    public bool HasMultiplePosters => AvailablePosters.Count > 1;
+
+    /// <summary>分页指示器文案，形如 "1/2"。</summary>
+    public string PosterIndicator => $"{PosterIndex + 1}/{PosterCount}";
+
+    /// <summary>当前海报在可用列表中的序号（从 0 开始）。</summary>
+    public int PosterIndex
+    {
+        get
+        {
+            var kinds = AvailablePosters.Keys.ToList();
+            var index = kinds.IndexOf(SelectedPosterKind);
+            return index < 0 ? 0 : index;
+        }
+    }
+
     partial void OnCoverPathChanged(string? value) => OnPropertyChanged(nameof(HasCover));
+
+    partial void OnAvailablePostersChanged(IReadOnlyDictionary<PosterKind, string> value)
+    {
+        OnPropertyChanged(nameof(PosterCount));
+        OnPropertyChanged(nameof(HasMultiplePosters));
+        OnPropertyChanged(nameof(PosterIndex));
+        OnPropertyChanged(nameof(PosterIndicator));
+
+        // 海报集合变了，当前形态可能已经不在里面 —— 重新对齐一次
+        SyncCoverPath();
+    }
+
+    partial void OnSelectedPosterKindChanged(PosterKind value)
+    {
+        SyncCoverPath();
+        OnPropertyChanged(nameof(PosterIndex));
+        OnPropertyChanged(nameof(PosterIndicator));
+        PosterKindChanged?.Invoke(this);
+    }
+
+    /// <summary>
+    /// 按当前选中的形态同步显示的图片。
+    /// 单独抽出来是因为"形态值没变"时 CommunityToolkit 不会触发属性变更，
+    /// 而海报集合刚填好时恰恰需要刷新一次显示。
+    /// </summary>
+    private void SyncCoverPath()
+    {
+        var path = AvailablePosters.TryGetValue(SelectedPosterKind, out var p) ? p : null;
+        if (!string.Equals(CoverPath, path, StringComparison.Ordinal))
+        {
+            CoverPath = path;
+        }
+    }
+
+    /// <summary>
+    /// 应用一批已下载好的海报：按当前偏好选一张显示，并保留其余形态供切换。
+    /// </summary>
+    public void ApplyPosters(IReadOnlyDictionary<PosterKind, string> posters, PosterKind preferred)
+    {
+        AvailablePosters = posters;
+
+        if (!posters.ContainsKey(preferred))
+        {
+            // 偏好的形态没下到，退到列表里第一个可用的
+            preferred = posters.Keys.FirstOrDefault();
+        }
+
+        SelectedPosterKind = preferred;
+    }
+
+    /// <summary>切到下一张海报（循环）。没有第二张时返回 false。</summary>
+    public bool NextPoster()
+    {
+        if (!HasMultiplePosters)
+        {
+            return false;
+        }
+
+        var kinds = AvailablePosters.Keys.ToList();
+        var next = (PosterIndex + 1) % kinds.Count;
+        SelectedPosterKind = kinds[next];
+        return true;
+    }
+
+    /// <summary>切到上一张海报（循环）。没有第二张时返回 false。</summary>
+    public bool PreviousPoster()
+    {
+        if (!HasMultiplePosters)
+        {
+            return false;
+        }
+
+        var kinds = AvailablePosters.Keys.ToList();
+        var previous = (PosterIndex - 1 + kinds.Count) % kinds.Count;
+        SelectedPosterKind = kinds[previous];
+        return true;
+    }
+
+    /// <summary>切到下一张海报。</summary>
+    [RelayCommand]
+    private void SwitchNextPoster() => NextPoster();
+
+    /// <summary>切到上一张海报。</summary>
+    [RelayCommand]
+    private void SwitchPreviousPoster() => PreviousPoster();
+
+    /// <summary>
+    /// 海报形态变化时触发，供外部（如 MainViewModel）持久化用户偏好。
+    /// </summary>
+    public event Action<GameListItemViewModel>? PosterKindChanged;
 
     public void Update(Game model, GameSyncState state, string stateText, string lastBackupText, int snapshotCount)
     {

@@ -7,6 +7,7 @@ using GameSaveSync.Core.Configuration;
 using GameSaveSync.Core.Covers;
 using GameSaveSync.Core.Diagnostics;
 using GameSaveSync.Core.Models;
+using GameSaveSync.Core.Online;
 using GameSaveSync.Core.Paths;
 using GameSaveSync.Core.Restore;
 using GameSaveSync.App.Views;
@@ -41,6 +42,7 @@ public sealed partial class MainViewModel : ObservableObject
     private readonly ISnapshotExporter _exporter;
     private readonly SnapshotDiffService _diffs;
     private readonly CoverService _covers;
+    private readonly SavePathRefreshService _refreshPaths;
     private readonly IPathTokenResolver _tokens;
     private readonly IFileSystem _fileSystem;
     private readonly IDialogService _dialogs;
@@ -59,6 +61,7 @@ public sealed partial class MainViewModel : ObservableObject
         ISnapshotExporter exporter,
         SnapshotDiffService diffs,
         CoverService covers,
+        SavePathRefreshService refreshPaths,
         IPathTokenResolver tokens,
         IFileSystem fileSystem,
         IDialogService dialogs,
@@ -79,6 +82,7 @@ public sealed partial class MainViewModel : ObservableObject
         _exporter = exporter ?? throw new ArgumentNullException(nameof(exporter));
         _diffs = diffs ?? throw new ArgumentNullException(nameof(diffs));
         _covers = covers ?? throw new ArgumentNullException(nameof(covers));
+        _refreshPaths = refreshPaths ?? throw new ArgumentNullException(nameof(refreshPaths));
         _tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
         _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
@@ -174,6 +178,14 @@ public sealed partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool isBusy;
 
+    /// <summary>「刷新存档路径」进行中（用于禁用按钮，防重复请求）。</summary>
+    [ObservableProperty]
+    private bool isRefreshingSavePaths;
+
+    /// <summary>「刷新存档路径」的状态提示（加载中 / 成功 / 失败原因）。</summary>
+    [ObservableProperty]
+    private string refreshSavePathsStatus = string.Empty;
+
     public bool HasSelection => SelectedGame is not null;
 
     public bool IsDetailVisible => SelectedGame is not null;
@@ -241,12 +253,47 @@ public sealed partial class MainViewModel : ObservableObject
         var selectedId = SelectedGame?.Id;
         var stored = await _games.ListAsync(CancellationToken.None).ConfigureAwait(true);
 
+        // 旧条目要退订，避免重建后事件重复触发
+        foreach (var old in Games)
+        {
+            old.PosterKindChanged -= SavePosterPreference;
+        }
+
         Games.Clear();
         foreach (var game in stored)
         {
             var item = new GameListItemViewModel(game);
             await item.RefreshAsync(_snapshots, _indexState, CancellationToken.None).ConfigureAwait(true);
-            item.CoverPath = _covers.GetCachedPath(game);
+
+            // 先用缓存里的海报立刻显示，缺哪种形态后台再补下
+            var cached = new Dictionary<PosterKind, string>();
+            foreach (var kind in PosterKinds.All)
+            {
+                var path = _covers.GetCachedPath(game, kind);
+                if (path is not null)
+                {
+                    cached[kind] = path;
+                }
+            }
+
+            // 升级前的旧缓存（不分形态）也先用上，避免老用户的海报凭空消失
+            if (cached.Count == 0)
+            {
+                var legacy = _covers.GetLegacyCachedPath(game);
+                if (legacy is not null)
+                {
+                    cached[_covers.ClassifyLegacyCached(game)] = legacy;
+                }
+            }
+
+            if (cached.Count > 0)
+            {
+                item.ApplyPosters(cached, ResolvePreferredPoster(game));
+            }
+
+            // 用户切换海报形态时把偏好写回数据库
+            item.PosterKindChanged += SavePosterPreference;
+
             Games.Add(item);
             QueueCoverLoad(item);
         }
@@ -786,6 +833,81 @@ public sealed partial class MainViewModel : ObservableObject
         StatusMessage = after.IsComplete ? "重新定位完成" : "仍有目录未找到，可再次定位";
     }
 
+    /// <summary>
+    /// 一键刷新存档路径：重新抓取外部存档路径站点的数据并覆盖已有的存档根。
+    /// 失败时保留原有数据，只提示错误——外部站点挂掉绝不能让用户的配置被清空。
+    /// </summary>
+    [RelayCommand]
+    private async Task RefreshSavePathsAsync()
+    {
+        if (SelectedGame is null || IsRefreshingSavePaths)
+        {
+            return;
+        }
+
+        var game = SelectedGame.Model;
+        IsRefreshingSavePaths = true;
+        RefreshSavePathsStatus = "正在刷新存档路径…";
+
+        try
+        {
+            var result = await _refreshPaths.RefreshAsync(game.Name, game.InstallDir, CancellationToken.None)
+                .ConfigureAwait(true);
+
+            if (!result.Succeeded)
+            {
+                // 失败：原样保留已有存档根，只把原因告诉用户
+                RefreshSavePathsStatus = result.Message;
+                StatusMessage = result.Message;
+                _logger.Warn($"刷新存档路径失败（保留原数据）：{game.Name} / {result.Message}");
+                return;
+            }
+
+            // 成功：覆盖存档根。保留原根上的排除/包含规则，避免用户白填一遍。
+            var oldRoots = game.SaveRoots.ToDictionary(
+                r => r.Token,
+                r => r,
+                StringComparer.OrdinalIgnoreCase);
+
+            var merged = new List<SaveRoot>();
+            foreach (var root in result.Roots)
+            {
+                if (oldRoots.TryGetValue(root.Token, out var existing))
+                {
+                    root.Include.AddRange(existing.Include);
+                    root.Exclude.AddRange(existing.Exclude);
+                }
+
+                merged.Add(root);
+            }
+
+            game.SaveRoots = merged;
+            game.UpdatedAt = _clock.UtcNowMs;
+
+            var resolution = SaveRootResolver.Resolve(game, _tokens, _fileSystem);
+            game.NeedsRelocate = !resolution.IsComplete;
+
+            await _games.UpsertAsync(game, CancellationToken.None).ConfigureAwait(true);
+            _logger.Info($"刷新存档路径：{game.Name} → {merged.Count} 个存档根");
+
+            RefreshSavePathsStatus = result.Message;
+            StatusMessage = result.Message;
+
+            await LoadAsync().ConfigureAwait(true);
+            SelectedGame = Games.FirstOrDefault(g => g.Id == game.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("刷新存档路径失败", ex);
+            RefreshSavePathsStatus = $"刷新失败：{ex.Message}";
+            StatusMessage = $"刷新失败：{ex.Message}";
+        }
+        finally
+        {
+            IsRefreshingSavePaths = false;
+        }
+    }
+
     [RelayCommand]
     private async Task ProbeAsync()
     {
@@ -884,18 +1006,64 @@ public sealed partial class MainViewModel : ObservableObject
 
     private void QueueCoverLoad(GameListItemViewModel item)
     {
-        if (item.HasCover)
+        // 所有适用形态都已经在缓存里了，不用再下载
+        var applicable = PosterKinds.All.Where(k => CoverService.SupportsKind(item.Model, k)).ToList();
+        if (applicable.Count == 0)
+        {
+            return;
+        }
+
+        if (applicable.All(k => item.AvailablePosters.ContainsKey(k)))
         {
             return;
         }
 
         _ = Task.Run(async () =>
         {
-            var path = await _covers.GetAsync(item.Model, CancellationToken.None).ConfigureAwait(false);
-            if (path is not null)
+            var posters = await LoadPostersAsync(item.Model).ConfigureAwait(false);
+            if (posters.Count > 0)
             {
-                item.CoverPath = path;
+                item.ApplyPosters(posters, ResolvePreferredPoster(item.Model));
             }
         });
+    }
+
+    /// <summary>下载该游戏所有形态的海报，返回"形态 → 本地路径"（下不到的形态不出现）。</summary>
+    private async Task<IReadOnlyDictionary<PosterKind, string>> LoadPostersAsync(Game model)
+    {
+        var loaded = await _covers.GetAllAsync(model, CancellationToken.None).ConfigureAwait(false);
+        var result = new Dictionary<PosterKind, string>();
+        foreach (var (kind, path) in loaded)
+        {
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                result[kind] = path;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>用户偏好的海报形态（没设过就用竖屏长图）。</summary>
+    private static PosterKind ResolvePreferredPoster(Game model)
+    {
+        return PosterKinds.TryParse(model.PosterKind, out var kind) ? kind : PosterKind.Portrait;
+    }
+
+    /// <summary>
+    /// 把用户选中的海报形态记到游戏上（下次打开还是这个）。
+    /// 由 <see cref="GameListItemViewModel.PosterKindChanged"/> 事件驱动。
+    /// </summary>
+    private void SavePosterPreference(GameListItemViewModel item)
+    {
+        var slug = item.SelectedPosterKind.Slug();
+        if (string.Equals(item.Model.PosterKind, slug, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        item.Model.PosterKind = slug;
+        item.Model.UpdatedAt = _clock.UtcNowMs;
+        _ = _games.UpsertAsync(item.Model, CancellationToken.None);
     }
 }

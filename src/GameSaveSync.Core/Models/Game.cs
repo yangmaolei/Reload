@@ -21,6 +21,12 @@ public sealed class Game
 
     public string? CoverUrl { get; set; }
 
+    /// <summary>
+    /// 用户选中的海报形态（竖屏长图 / 方形头图）。
+    /// 为空表示用默认形态（竖屏长图）。这个偏好只跟本机 UI 走，不参与同步。
+    /// </summary>
+    public string? PosterKind { get; set; }
+
     public bool Enabled { get; set; } = true;
 
     public RetentionPolicy Retention { get; set; } = new();
