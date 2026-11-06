@@ -148,7 +148,7 @@ public sealed partial class WizardViewModel : ObservableObject
     public string StepSubtitle => StepIndex switch
     {
         0 => "用一个 WebDAV 目录同步存档。可以稍后再配，先只做本地备份。",
-        1 => "从 Steam / Epic / GOG / Ubisoft / UWP 里找出已安装的游戏，自动匹配常见存档目录。",
+        1 => "从 Steam / Epic / GOG / Ubisoft / Xbox 里找出已安装的游戏，自动匹配常见存档目录。",
         _ => "确认要加入的游戏。加好后可以在详情页调整存档目录或开启探测模式。",
     };
 
