@@ -10,7 +10,6 @@
 
     <UserControl.Resources>
         <conv:PosterIndicatorConverter x:Key="PosterIndicator" />
-        <conv:PosterHeightConverter x:Key="PosterHeight" />
 
         <!-- 切换按钮：小圆角方形，浮在图片左右两侧 -->
         <Style x:Key="SwitchButton" TargetType="Button">
@@ -74,60 +73,75 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- 图片区：底板 + 描边 + 图片（Uniform 等比缩放，不裁切不变形） -->
-        <Border x:Name="PosterFrame"
-                Grid.Row="0"
-                Background="{DynamicResource Md3.SurfaceContainerLowest}"
-                BorderBrush="{DynamicResource Md3.OutlineVariant}"
-                BorderThickness="1"
-                CornerRadius="12"
-                ClipToBounds="True">
-            <Grid>
-                <!-- 首字母色块兜底：只在没有海报时显示。
-                     有海报时必须隐藏，否则图片等比缩放后没填满容器，
-                     露出的色块会被误看成图片的一部分。 -->
-                <Border x:Name="FallbackTile"
-                        CornerRadius="12"
-                        Visibility="{Binding HasCover, Converter={StaticResource InverseBool}}"
-                        Background="{Binding Name, Converter={StaticResource NameToBrush}}">
-                    <TextBlock Text="{Binding Name, Converter={StaticResource Initials}}"
-                               FontSize="26" FontWeight="SemiBold"
-                               HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Foreground="{Binding Name, Converter={StaticResource NameToBrush}, ConverterParameter=foreground}" />
-                </Border>
+        <!-- 图片区。
+             【为什么不用 Border + ClipToBounds】
+             WPF 的 ClipToBounds 只按【直角矩形】裁切，会把圆角外的部分硬生生切成一个
+             方角，视觉上就是"海报被生硬地裁了一刀"。圆角必须由 Image 自己的 Clip 提供。
+             所以这里用 Grid 叠层：圆角底板/描边一层，图片一层，图片自带圆角 Clip。 -->
+        <Grid x:Name="PosterFrame" Grid.Row="0">
 
-                <!-- 海报：等比缩放（Uniform），高度按形态宽高比自适应，窄屏下不溢出 -->
-                <Image x:Name="PosterImage"
-                       Source="{Binding CoverPath}"
-                       Stretch="Uniform"
-                       Visibility="{Binding HasCover, Converter={StaticResource BoolToVisibility}}">
-                    <Image.Height>
-                        <MultiBinding Converter="{StaticResource PosterHeight}">
-                            <Binding Path="ActualWidth" ElementName="PosterFrame" />
-                            <Binding Path="SelectedPosterKind" />
-                        </MultiBinding>
-                    </Image.Height>
-                </Image>
+            <!-- 圆角底板 + 描边：只负责画，不裁剪任何东西 -->
+            <Border x:Name="PosterChrome"
+                    CornerRadius="12"
+                    Background="{DynamicResource Md3.SurfaceContainerLowest}"
+                    BorderBrush="{DynamicResource Md3.OutlineVariant}"
+                    BorderThickness="1" />
 
-                <!-- 左右切换按钮 -->
-                <Button x:Name="PrevButton"
-                        Style="{StaticResource SwitchButton}"
-                        HorizontalAlignment="Left" VerticalAlignment="Center"
-                        Margin="6,0,0,0"
-                        Content="&#xE72B;"
-                        ToolTip="上一张海报"
-                        Visibility="{Binding HasMultiplePosters, Converter={StaticResource BoolToVisibility}}"
-                        Command="{Binding SwitchPreviousPosterCommand}" />
-                <Button x:Name="NextButton"
-                        Style="{StaticResource SwitchButton}"
-                        HorizontalAlignment="Right" VerticalAlignment="Center"
-                        Margin="0,0,6,0"
-                        Content="&#xE72A;"
-                        ToolTip="下一张海报"
-                        Visibility="{Binding HasMultiplePosters, Converter={StaticResource BoolToVisibility}}"
-                        Command="{Binding SwitchNextPosterCommand}" />
-            </Grid>
-        </Border>
+            <!-- 首字母色块兜底：只在没有海报时显示。
+                 用 BoolToVisibility+invert（明确返回 Collapsed）而不是 InverseBool：
+                 bool→Visibility 的内建转换映射到 Hidden，Hidden 元素【仍占布局空间】，
+                 会把海报框撑成方形，在方形头图下方露出一大片空白底板。
+                 有海报时也必须隐藏色块，否则图片没填满容器时露出的色块
+                 会被误看成图片的一部分。 -->
+            <Border x:Name="FallbackTile"
+                    CornerRadius="12"
+                    Visibility="{Binding HasCover, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}"
+                    Background="{Binding Name, Converter={StaticResource NameToBrush}}">
+                <Border.Height>
+                    <Binding Path="ActualWidth" ElementName="PosterFrame" />
+                </Border.Height>
+                <TextBlock Text="{Binding Name, Converter={StaticResource Initials}}"
+                           FontSize="26" FontWeight="SemiBold"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{Binding Name, Converter={StaticResource NameToBrush}, ConverterParameter=foreground}" />
+            </Border>
+
+            <!-- 海报：等比缩放（Uniform），高度由 WPF 按原图比例自动算。
+                 【为什么不固定 Height】先定高度再让宽度受容器上限约束，会导致图片被压扁、
+                 上下露出底板色；只让宽度由容器给、高度按比例自动算，才是真正的
+                 "等比缩放、不变形、不留缝、不溢出"。 -->
+            <Image x:Name="PosterImage"
+                   Source="{Binding CoverPath}"
+                   Stretch="Uniform"
+                   HorizontalAlignment="Stretch"
+                   Visibility="{Binding HasCover, Converter={StaticResource BoolToVisibility}}">
+                <Image.Clip>
+                    <MultiBinding Converter="{StaticResource RoundedClip}">
+                        <Binding Path="ActualWidth" ElementName="PosterImage" />
+                        <Binding Path="ActualHeight" ElementName="PosterImage" />
+                        <Binding Source="11" />
+                    </MultiBinding>
+                </Image.Clip>
+            </Image>
+
+            <!-- 左右切换按钮 -->
+            <Button x:Name="PrevButton"
+                    Style="{StaticResource SwitchButton}"
+                    HorizontalAlignment="Left" VerticalAlignment="Center"
+                    Margin="6,0,0,0"
+                    Content="&#xE72B;"
+                    ToolTip="上一张海报"
+                    Visibility="{Binding HasMultiplePosters, Converter={StaticResource BoolToVisibility}}"
+                    Command="{Binding SwitchPreviousPosterCommand}" />
+            <Button x:Name="NextButton"
+                    Style="{StaticResource SwitchButton}"
+                    HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Margin="0,0,6,0"
+                    Content="&#xE72A;"
+                    ToolTip="下一张海报"
+                    Visibility="{Binding HasMultiplePosters, Converter={StaticResource BoolToVisibility}}"
+                    Command="{Binding SwitchNextPosterCommand}" />
+        </Grid>
 
         <!-- 分页指示器：点数 = 可用海报数 -->
         <ItemsControl x:Name="IndicatorRow"

@@ -150,55 +150,28 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:GameListItemViewModel}">
+                                <!-- 整卡可点进入详情；海报区内的左右箭头是嵌套按钮，
+                                     WPF 中内层按钮优先消费点击，不会冒泡到外层卡片。 -->
                                 <Button Style="{StaticResource CardButton}"
                                         Command="{Binding DataContext.SelectGameCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                         CommandParameter="{Binding}"
                                         AutomationProperties.Name="{Binding Name}">
-                                    <Border Style="{StaticResource Md3.ElevatedCard}" Width="336" Height="132" Padding="14">
+                                    <Border Style="{StaticResource Md3.ElevatedCard}" Width="212" Padding="0">
                                         <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
 
-                                            <Grid Width="88" Height="88" VerticalAlignment="Top">
-                                                <Border CornerRadius="14"
-                                                        Background="{Binding Name, Converter={StaticResource NameToBrush}}">
-                                                    <TextBlock Text="{Binding Name, Converter={StaticResource Initials}}"
-                                                               FontSize="26" FontWeight="SemiBold"
-                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                               Foreground="{Binding Name, Converter={StaticResource NameToBrush}, ConverterParameter=foreground}" />
-                                                </Border>
+                                            <!-- 海报区：竖屏长图 / 方形头图 两种形态可切换，
+                                                 高度按形态宽高比自适应，等比缩放不变形。 -->
+                                            <ctrl:PosterSwitcher Grid.Row="0" DataContext="{Binding}"
+                                                                 Margin="10,10,10,0" />
 
-                                                <!-- 海报层：外框容器（底板 + 描边 + 内边距），与图标层分离、层级清晰。
-     WPF 的 Border.CornerRadius 不会裁剪子内容（实测角落像素仍为原色），
-     所以图片必须自己提供 Clip。裁剪矩形绑定图片实际渲染尺寸，避免硬编码失配。 -->
-                                                <Border Margin="5"
-                                                        CornerRadius="12"
-                                                        Background="{DynamicResource Md3.SurfaceContainerLowest}"
-                                                        BorderBrush="{DynamicResource Md3.OutlineVariant}"
-                                                        BorderThickness="1"
-                                                        Padding="3"
-                                                        Visibility="{Binding HasCover, Converter={StaticResource BoolToVisibility}}">
-                                                    <Image x:Name="CoverImage"
-                                                           Source="{Binding CoverPath}"
-                                                           Stretch="UniformToFill">
-                                                        <Image.Clip>
-                                                            <MultiBinding Converter="{StaticResource RoundedClip}">
-                                                                <Binding Path="ActualWidth" ElementName="CoverImage" />
-                                                                <Binding Path="ActualHeight" ElementName="CoverImage" />
-                                                                <Binding Source="10" />
-                                                            </MultiBinding>
-                                                        </Image.Clip>
-                                                    </Image>
-                                                </Border>
-                                            </Grid>
-
-                                            <Grid Grid.Column="1" Margin="14,0,0,0">
+                                            <Grid Grid.Row="1" Margin="12,10,12,12">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="*" />
                                                     <RowDefinition Height="Auto" />
                                                 </Grid.RowDefinitions>
 
@@ -212,19 +185,16 @@
                                                                TextTrimming="CharacterEllipsis" />
                                                 </DockPanel>
 
-                                                <TextBlock Grid.Row="1" Margin="0,2,0,0" Style="{StaticResource Md3.BodySmall}">
+                                                <TextBlock Grid.Row="1" Margin="0,2,0,0" Style="{StaticResource Md3.BodySmall}"
+                                                           TextTrimming="CharacterEllipsis">
                                                     <Run Text="{Binding PlatformText, Mode=OneWay}" />
                                                     <Run Text=" · " />
                                                     <Run Text="{Binding MetaText, Mode=OneWay}" />
                                                 </TextBlock>
 
-                                                <TextBlock Grid.Row="2" Text="{Binding RootSummary}" Margin="0,8,0,0"
+                                                <TextBlock Grid.Row="2" Text="{Binding RootSummary}" Margin="0,6,0,0"
                                                            Style="{StaticResource Md3.LabelSmall}"
                                                            Foreground="{DynamicResource Md3.Outline}"
-                                                           TextTrimming="CharacterEllipsis" VerticalAlignment="Top" />
-
-                                                <TextBlock Grid.Row="3" Text="{Binding LastBackupText}"
-                                                           Style="{StaticResource Md3.BodySmall}" Margin="0,6,0,0"
                                                            TextTrimming="CharacterEllipsis" />
                                             </Grid>
                                         </Grid>
