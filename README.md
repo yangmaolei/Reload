@@ -8,7 +8,7 @@ CAS（内容寻址存储），再通过 **WebDAV** 同步到你自己控制的�
 
 - 平台：Windows x64
 - 技术栈：.NET 8 / WPF / Material Design 3
-- 当前版本：**1.0.0**
+- 当前版本：**1.1.0**
 - 许可：[MIT](LICENSE)
 
 > 项目原名 `GameSaveSync`，v0.4 起更名为 **Reload**。首次启动会自动把旧数据目录
@@ -148,7 +148,7 @@ BLAKE3 内容比对。配合 3 秒去抖与 400 毫秒复检，**内容没变就
 
 ### 方式一：下载 Release 产物（推荐）
 
-到 [Releases 页面](https://github.com/yangmaolei/Reload/releases) 下载 `Reload-1.0.0-win-x64.zip`：
+到 [Releases 页面](https://github.com/yangmaolei/Reload/releases) 下载 `Reload-1.1.0-win-x64.zip`：
 
 1. 解压到任意目录；
 2. 运行 `Reload.exe`；

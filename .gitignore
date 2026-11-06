@@ -65,6 +65,8 @@ coverage*.info
 !docs/*.log
 *.zip
 !docs/*.zip
+#  发布打包目录（zip / 校验和只作为 Release 资产上传，不入库）
+release/
 portable.flag
 settings.json
 
