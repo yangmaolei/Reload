@@ -51,6 +51,7 @@ coverage*.info
 /data/
 /covers/
 /logs/
+/manifest/
 /diagnostics/
 /screenshots/
 #  数据库 / WAL / 快照库

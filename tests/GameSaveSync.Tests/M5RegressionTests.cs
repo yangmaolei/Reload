@@ -360,7 +360,7 @@ public class M5RegressionTests
             : """{"parse":{"wikitext":"{{Game data/saves|Windows|{{p|userprofile\\\\Saved Games\\\\Foo}}}}"}}""");
 
         using var provider = new GameSaveSync.Core.Online.PcGamingWikiProvider(
-            new HttpClient(handler) { BaseAddress = new Uri("https://test/") });
+            client: new HttpClient(handler) { BaseAddress = new Uri("https://test/") });
 
         var result = await provider.QueryAsync("Cyberpunk 2077", default);
 

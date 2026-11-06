@@ -12,7 +12,7 @@ public sealed class PathTokenException : Exception
 
 /// <summary>
 /// 令牌化路径的展开与反向令牌化。
-/// 支持的令牌：%USERPROFILE% %APPDATA% %LOCALAPPDATA% %DOCUMENTS% %SAVEDGAMES%
+/// 支持的令牌：%USERPROFILE% %APPDATA% %LOCALAPPDATA% %DOCUMENTS% %SAVEDGAMES% %PUBLIC% %PROGRAMDATA% %WINDIR%
 /// （M4 再加入 %GAMEDIR% &lt;SteamUserData&gt; &lt;SteamAppId&gt; 等）。
 /// </summary>
 public interface IPathTokenResolver
@@ -37,6 +37,9 @@ public sealed class PathTokenResolver : IPathTokenResolver
     public const string LocalAppData = "%LOCALAPPDATA%";
     public const string Documents = "%DOCUMENTS%";
     public const string SavedGames = "%SAVEDGAMES%";
+    public const string Public = "%PUBLIC%";
+    public const string ProgramData = "%PROGRAMDATA%";
+    public const string Windows = "%WINDIR%";
 
     private static readonly string[] TokenOrder =
     {
@@ -98,6 +101,9 @@ public sealed class PathTokenResolver : IPathTokenResolver
         Add(LocalAppData, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
         Add(Documents, documents);
         Add(SavedGames, savedGames);
+        Add(Public, Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        Add(ProgramData, Environment.GetEnvironmentVariable("ProgramData"));
+        Add(Windows, Environment.GetFolderPath(Environment.SpecialFolder.Windows));
         return map;
     }
 

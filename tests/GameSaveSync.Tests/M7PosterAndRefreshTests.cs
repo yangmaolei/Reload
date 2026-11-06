@@ -356,7 +356,7 @@ public sealed class M7PosterAndRefreshTests : IDisposable
                 new OnlineSavePath("G", "%DOCUMENTS%\\G\\Saves", OnlineSavePathKind.Saves, "https://example.org/g"),
             });
 
-            var service = new SavePathRefreshService(provider, env.Tokens);
+            var service = new SavePathRefreshService(new IOnlineSavePathProvider[] { provider }, env.Tokens);
             var result = await service.RefreshAsync("G", installDir: (string?)null, CancellationToken.None);
 
             Assert.True(result.Succeeded);
@@ -381,7 +381,7 @@ public sealed class M7PosterAndRefreshTests : IDisposable
                 new OnlineSavePath("G", "%DOCUMENTS%\\G\\Saves", OnlineSavePathKind.Saves, "https://example.org/g"),
             });
 
-            var service = new SavePathRefreshService(provider, env.Tokens);
+            var service = new SavePathRefreshService(new IOnlineSavePathProvider[] { provider }, env.Tokens);
             var result = await service.RefreshAsync("G", installDir: (string?)null, CancellationToken.None);
 
             Assert.True(result.Succeeded);
@@ -406,7 +406,7 @@ public sealed class M7PosterAndRefreshTests : IDisposable
                 new OnlineSavePath("G", "{installDir}\\Saves", OnlineSavePathKind.Saves, "https://example.org/g"),
             });
 
-            var service = new SavePathRefreshService(provider, env.Tokens);
+            var service = new SavePathRefreshService(new IOnlineSavePathProvider[] { provider }, env.Tokens);
             var result = await service.RefreshAsync("G", installDir: "C:\\Games\\G", CancellationToken.None);
 
             Assert.True(result.Succeeded);
@@ -431,7 +431,7 @@ public sealed class M7PosterAndRefreshTests : IDisposable
                 new OnlineSavePath("G", "%DOCUMENTS%\\G", OnlineSavePathKind.Config, "https://example.org/g"),
             });
 
-            var service = new SavePathRefreshService(provider, env.Tokens);
+            var service = new SavePathRefreshService(new IOnlineSavePathProvider[] { provider }, env.Tokens);
             var result = await service.RefreshAsync("G", installDir: (string?)null, CancellationToken.None);
 
             Assert.True(result.Succeeded);
@@ -458,7 +458,7 @@ public sealed class M7PosterAndRefreshTests : IDisposable
                 Failure = "连接超时",
             };
 
-            var service = new SavePathRefreshService(provider, env.Tokens);
+            var service = new SavePathRefreshService(new IOnlineSavePathProvider[] { provider }, env.Tokens);
             var result = await service.RefreshAsync("G", installDir: (string?)null, CancellationToken.None);
 
             Assert.False(result.Succeeded);
@@ -478,7 +478,7 @@ public sealed class M7PosterAndRefreshTests : IDisposable
         try
         {
             var provider = new StubOnlineProvider(Array.Empty<OnlineSavePath>());
-            var service = new SavePathRefreshService(provider, env.Tokens);
+            var service = new SavePathRefreshService(new IOnlineSavePathProvider[] { provider }, env.Tokens);
 
             var result = await service.RefreshAsync("G", installDir: (string?)null, CancellationToken.None);
 
@@ -500,7 +500,7 @@ public sealed class M7PosterAndRefreshTests : IDisposable
         try
         {
             var provider = new ThrowingOnlineProvider();
-            var service = new SavePathRefreshService(provider, env.Tokens);
+            var service = new SavePathRefreshService(new IOnlineSavePathProvider[] { provider }, env.Tokens);
 
             var result = await service.RefreshAsync("G", installDir: (string?)null, CancellationToken.None);
 
@@ -525,7 +525,7 @@ public sealed class M7PosterAndRefreshTests : IDisposable
                 new OnlineSavePath("G", "{installDir}\\Saves", OnlineSavePathKind.Saves, "https://example.org/g"),
             });
 
-            var service = new SavePathRefreshService(provider, env.Tokens);
+            var service = new SavePathRefreshService(new IOnlineSavePathProvider[] { provider }, env.Tokens);
             var result = await service.RefreshAsync("G", installDir: (string?)null, CancellationToken.None);
 
             Assert.False(result.Succeeded);
@@ -545,7 +545,7 @@ public sealed class M7PosterAndRefreshTests : IDisposable
         try
         {
             var provider = new StubOnlineProvider(Array.Empty<OnlineSavePath>());
-            var service = new SavePathRefreshService(provider, env.Tokens);
+            var service = new SavePathRefreshService(new IOnlineSavePathProvider[] { provider }, env.Tokens);
 
             var result = await service.RefreshAsync("   ", installDir: (string?)null, CancellationToken.None);
 
@@ -569,7 +569,7 @@ public sealed class M7PosterAndRefreshTests : IDisposable
                 new OnlineSavePath("G", "%DOCUMENTS%\\G", OnlineSavePathKind.Saves, "https://example.org/g"),
             });
 
-            var service = new SavePathRefreshService(provider, env.Tokens);
+            var service = new SavePathRefreshService(new IOnlineSavePathProvider[] { provider }, env.Tokens);
 
             // 串行两次 = 两次请求（服务本身不缓存，由 UI 层防抖）
             await service.RefreshAsync("G", installDir: (string?)null, CancellationToken.None);

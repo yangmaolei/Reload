@@ -48,4 +48,12 @@ public interface IOnlineSavePathProvider
     /// 并在 <see cref="OnlineSavePathQueryResult.ErrorMessage"/> 里给出原因。
     /// </summary>
     Task<OnlineSavePathQueryResult> QueryDetailedAsync(string gameName, CancellationToken ct);
+
+    /// <summary>
+    /// 带平台标识（如 Steam AppID）的查询。
+    /// 有 AppID 的数据源可以用它做精确匹配，避免同名游戏匹配错；
+    /// 不支持精确匹配的实现可以忽略这个参数。
+    /// </summary>
+    Task<OnlineSavePathQueryResult> QueryDetailedAsync(string gameName, string? externalId, CancellationToken ct) =>
+        QueryDetailedAsync(gameName, ct);
 }

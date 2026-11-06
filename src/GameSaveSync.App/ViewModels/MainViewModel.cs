@@ -851,7 +851,13 @@ public sealed partial class MainViewModel : ObservableObject
 
         try
         {
-            var result = await _refreshPaths.RefreshAsync(game.Name, game.InstallDir, CancellationToken.None)
+            var result = await _refreshPaths
+                .RefreshAsync(
+                    game.Name,
+                    game.InstallDir,
+                    CancellationToken.None,
+                    game.ExternalId,
+                    message => RefreshSavePathsStatus = message)
                 .ConfigureAwait(true);
 
             if (!result.Succeeded)

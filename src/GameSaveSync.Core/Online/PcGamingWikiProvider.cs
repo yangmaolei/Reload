@@ -1,4 +1,5 @@
 using System.Text.Json;
+using GameSaveSync.Core.Abstractions;
 
 namespace GameSaveSync.Core.Online;
 
@@ -16,15 +17,26 @@ public sealed class PcGamingWikiProvider : IOnlineSavePathProvider, IDisposable
 
     private readonly HttpClient _client;
 
-    public PcGamingWikiProvider(HttpClient? client = null)
+    public PcGamingWikiProvider(IWebProxyProvider? proxyProvider = null, HttpClient? client = null)
     {
-        _client = client ?? new HttpClient(new HttpClientHandler
+        var handler = new HttpClientHandler
         {
             AllowAutoRedirect = true,
             AutomaticDecompression = System.Net.DecompressionMethods.All,
-        })
+        };
+
+        // 显式指定系统代理：环境变量里的代理往往只覆盖部分域名，
+        // 用它会把本来能直连的站点也绕过去、被 Cloudflare 拦成 403。
+        var proxy = proxyProvider?.GetProxy();
+        if (proxy is not null)
         {
-            Timeout = TimeSpan.FromSeconds(10),
+            handler.Proxy = proxy;
+            handler.UseProxy = true;
+        }
+
+        _client = client ?? new HttpClient(handler)
+        {
+            Timeout = TimeSpan.FromSeconds(15),
         };
 
         _client.DefaultRequestHeaders.UserAgent.TryParseAdd(BrowserUserAgent);
