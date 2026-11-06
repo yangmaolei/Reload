@@ -142,21 +142,35 @@ Xbox 库根：C:\XboxGames
 | 依赖目录 | `packages/`、NuGet 包缓存（`.nupkg`）、`obj/project.assets.json` 随 obj 一起忽略 |
 | IDE | `.vs/`、`.vscode/`、`.idea/`、`*.suo`、`*.user`、`*.sln.docstates` |
 | 测试产物 | `TestResults/`、`*.trx`、`*.coverage`、`coverage*.xml` |
-| 运行期数据 | `data/`（便携模式）、`*.db`（含 `-wal`/`-shm`）、`covers/`、`logs/`、`*.log`、`portable.flag` |
+| 运行期数据 | `/data/`（便携模式）、`*.db`（含 `-wal`/`-shm`）、`/covers/`、`/logs/`、`/diagnostics/`、`*.log` |
 | 密钥 | `*.pfx`、`*.p12`、`*.pem`、`*.key`、`.env`、`secrets.json` |
-| 大体积资源 | `*.png`、`*.jpg`、`*.mp4`（`src/GameSaveSync.App/Assets/**` 用 `!` 单独保留） |
+| 大体积资源 | `*.png`、`*.jpg`、`*.mp4`（`src/**/Assets/**` 与 `docs/**` 用 `!` 单独保留） |
 | 其它 | `*.bak`、`*.tmp`、`Thumbs.db`、`desktop.ini` |
 
 `docs/test-run.log` 用 `!docs/*.log` 保留（它是交付物，不是运行期日志）。
+
+> ⚠ **踩过的坑（已修复，提交 `3c8223b`）**
+> 首版 `.gitignore` 写的是不锚定的 `diagnostics/` 与 `covers/`。Windows 上 git 默认
+> `core.ignorecase=true`，目录名匹配**不区分大小写**，于是
+> `src/GameSaveSync.Core/Diagnostics/` 和 `src/GameSaveSync.Core/Covers/`
+> 两个**源码目录**被整目录忽略，`CoverService.cs`、`Logging.cs`、`DiagnosticsService.cs`
+> 三个文件没有入库——**本地构建照常通过，但从仓库克隆后构建直接失败（59 个错误，缺 `IClock`/`IAppLogger`）**。
+>
+> 修复：所有运行期数据目录改用 `/` 锚定到仓库根（`/diagnostics/`、`/covers/`…），
+> 并补回被误删的 `*.db` / `*.sqlite` 规则。
+>
+> **教训：`.gitignore` 必须用"克隆后构建"来验证，光看 `git status` 是不够的**
+> （`git status` 只会安静地少列文件，不会报错）。
 
 ### 2.3 首次提交
 
 ```
 733fb40  feat(xbox): 支持 Xbox / 微软商店游戏识别，并接入 Git 版本管理
- 166 files changed
+f81f31f  docs(m6): 补充 Xbox 识别与 Git 版本管理交付说明，更新向导副标题文案
+3c8223b  fix(git): 修正 .gitignore 误伤源码目录
 ```
 
-- 跟踪文件 **166** 个（源码 + 文档 + 解决方案 + 配置文件）。
+- 跟踪文件 **170** 个（源码 + 文档 + 解决方案 + 配置文件）。
 - `.git` 目录仅 **约 1 MB**（对比工作区 389 MB）——`publish/`（141 MB）、各项目 `bin/obj`（248 MB）全部排除。
 - 工作区状态干净（`git status` 无输出）。
 
@@ -175,12 +189,23 @@ cd C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync
 
 git log --oneline          # 首次提交
 git status                 # 工作区应干净
-git ls-files | wc -l       # 166
+git ls-files | wc -l       # 170
 git status --ignored --short | grep '^!!'   # publish/、各 bin/obj 应在此列
 ```
 
 自检已做：手工在 `bin/`、`publish/`、`data/`、`logs/`、根目录造 `secret.pfx`、`screenshot.png`，
 `git status` 全部无输出（正确忽略），随后已清理。
+
+**最有价值的一项验证——克隆后重建**（务必做，`git status` 发现不了漏跟踪的文件）：
+
+```bash
+git clone <repo> /tmp/reload-clone-check
+cd /tmp/reload-clone-check
+dotnet build GameSaveSync.sln      # 期望：0 warning 0 error
+dotnet test  GameSaveSync.sln      # 期望：320/320 通过
+```
+
+已实测通过（这正是发现 `.gitignore` 误伤 `Diagnostics/`、`Covers/` 两个源码目录的手段）。
 
 ---
 
