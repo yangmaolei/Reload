@@ -1,0 +1,372 @@
+﻿<Window x:Class="GameSaveSync.App.Views.WizardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:vm="clr-namespace:GameSaveSync.App.ViewModels"
+        Title="设置 Reload" Width="920" Height="680"
+        WindowStyle="None" Background="{DynamicResource Md3.SurfaceContainerLow}"
+        ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
+        FontFamily="{StaticResource Md3.FontFamily}"
+        PreviewKeyDown="Window_OnPreviewKeyDown"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="ClearType"
+        UseLayoutRounding="True">
+
+    <!-- 圆角用 WindowChrome 实现，不用 AllowsTransparency：
+         layered window（AllowsTransparency=True）会关闭 ClearType 子像素渲染，
+         实测彩色边缘占比从 58% 掉到 9%，文字明显发糊（125% 缩放下尤其明显）。
+         WindowChrome 的 CornerRadius 由系统裁切窗口区域，既保留圆角又走 GPU 合成路径。 -->
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="0"
+                            CornerRadius="28" GlassFrameThickness="0"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <!-- 内容层不再挂 DropShadowEffect：
+         Effect 会把整棵子树渲染成离屏位图，文字要经由位图再合成，锐度下降。
+         圆角窗口自带 DWM 阴影，无需自己画。 -->
+    <Border CornerRadius="28" Background="{DynamicResource Md3.SurfaceContainerLow}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- 标题（拖拽区） -->
+            <Grid Grid.Row="0" Margin="28,24,18,0"
+                  Background="Transparent"
+                  MouseLeftButtonDown="Title_OnMouseLeftButtonDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="{Binding StepTitle}" Style="{StaticResource Md3.HeadlineSmall}" />
+                    <TextBlock Text="{Binding StepSubtitle}" Style="{StaticResource Md3.BodyMedium}"
+                               Foreground="{DynamicResource Md3.OnSurfaceVariant}" Margin="0,6,24,0"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="{Binding StepCounterText}" Style="{StaticResource Md3.LabelMedium}"
+                               VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <Button Style="{StaticResource Md3.IconButton}" Click="Close_OnClick">
+                        <TextBlock Text="&#xE8BB;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- 步骤指示 -->
+            <Grid Grid.Row="1" Margin="28,18,28,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Border Width="32" Height="32" CornerRadius="16">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource Md3.SurfaceContainerHighest}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsWebDavStep}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Md3.Primary}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="1" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurfaceVariant}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsWebDavStep}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource Md3.OnPrimary}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+                    <TextBlock Text="连接云端" Style="{StaticResource Md3.LabelMedium}" VerticalAlignment="Center" Margin="8,0,0,0" />
+                </StackPanel>
+
+                <Border Grid.Column="1" Height="2" Margin="12,0" VerticalAlignment="Center"
+                        Background="{DynamicResource Md3.OutlineVariant}" />
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Border Width="32" Height="32" CornerRadius="16">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource Md3.SurfaceContainerHighest}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsScanStep}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Md3.Primary}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="2" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurfaceVariant}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsScanStep}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource Md3.OnPrimary}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+                    <TextBlock Text="选择游戏" Style="{StaticResource Md3.LabelMedium}" VerticalAlignment="Center" Margin="8,0,0,0" />
+                </StackPanel>
+
+                <Border Grid.Column="3" Height="2" Margin="12,0" VerticalAlignment="Center"
+                        Background="{DynamicResource Md3.OutlineVariant}" />
+
+                <StackPanel Grid.Column="4" Orientation="Horizontal">
+                    <Border Width="32" Height="32" CornerRadius="16">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource Md3.SurfaceContainerHighest}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsConfirmStep}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Md3.Primary}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="3" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurfaceVariant}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsConfirmStep}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource Md3.OnPrimary}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+                    <TextBlock Text="确认" Style="{StaticResource Md3.LabelMedium}" VerticalAlignment="Center" Margin="8,0,0,0" />
+                </StackPanel>
+            </Grid>
+
+            <!-- 内容 -->
+            <Grid Grid.Row="2" Margin="28,20,28,0">
+
+                <!-- 第 1 步：WebDAV -->
+                <ScrollViewer Style="{StaticResource Md3.ScrollViewer}"
+                              Visibility="{Binding IsWebDavStep, Converter={StaticResource BoolToVisibility}}">
+                    <StackPanel>
+                        <TextBlock Text="服务地址" Style="{StaticResource Md3.FieldLabel}" />
+                        <TextBox Text="{Binding BaseUrl, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="例如 https://dav.jianguoyun.com/dav/" />
+
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="12" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="用户名" Style="{StaticResource Md3.FieldLabel}" />
+                                <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="应用密码" Style="{StaticResource Md3.FieldLabel}" />
+                                <PasswordBox x:Name="PasswordBox" PasswordChanged="PasswordBox_OnPasswordChanged" />
+                                <TextBlock Text="留空表示沿用已保存的密码" Style="{StaticResource Md3.Hint}"
+                                           Visibility="{Binding HasStoredPassword, Converter={StaticResource BoolToVisibility}}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="12" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="远程根目录" Style="{StaticResource Md3.FieldLabel}" />
+                                <TextBox Text="{Binding RemoteRoot, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="自签名证书指纹（可选）" Style="{StaticResource Md3.FieldLabel}" />
+                                <TextBox Text="{Binding CertificateThumbprint, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                            <Button Style="{StaticResource Md3.TonalButton}"
+                                    Command="{Binding TestConnectionCommand}" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE753;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                            <TextBlock Text="测试连接" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                            <Button Content="跳过，只做本地备份" Style="{StaticResource Md3.TextButton}"
+                                    Command="{Binding SkipWebDavCommand}" />
+                        </StackPanel>
+
+                        <Border Style="{StaticResource Md3.FilledCard}" Margin="0,18,0,0" Padding="14,10">
+                            <TextBlock Text="{Binding WebDavStatus}" Style="{StaticResource Md3.BodySmall}"
+                                       Foreground="{DynamicResource Md3.OnSurface}" TextWrapping="Wrap" />
+                        </Border>
+
+                        <TextBlock Text="凭据用 Windows DPAPI 加密后存在本机；WebDAV 侧只保存快照，不保存密码。"
+                                   Style="{StaticResource Md3.Hint}" Margin="0,14,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- 第 2 步：扫描 -->
+                <Grid Visibility="{Binding IsScanStep, Converter={StaticResource BoolToVisibility}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding ScanStatus}" Style="{StaticResource Md3.BodySmall}"
+                                   VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,12,0" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Content="全选" Style="{StaticResource Md3.TextButton}" FontSize="12"
+                                    Command="{Binding SelectAllCommand}" Margin="0,0,4,0" />
+                            <Button Content="全不选" Style="{StaticResource Md3.TextButton}" FontSize="12"
+                                    Command="{Binding SelectNoneCommand}" Margin="0,0,8,0" />
+                            <Button Content="重新扫描" Style="{StaticResource Md3.OutlinedButton}"
+                                    Command="{Binding ScanCommand}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Grid.Row="1" Style="{StaticResource Md3.OutlinedCard}" Padding="6">
+                        <Grid>
+                            <ListBox ItemsSource="{Binding Discovered}" Style="{StaticResource Md3.ListBox}"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:DiscoveryItemViewModel}">
+                                        <Border CornerRadius="10" Padding="10,8" Margin="0,1">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}"
+                                                          IsEnabled="{Binding Model.AlreadyAdded, Converter={StaticResource InverseBool}}"
+                                                          VerticalAlignment="Center" />
+
+                                                <StackPanel Grid.Column="1" Margin="10,0,10,0">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding Name}" Style="{StaticResource Md3.LabelLarge}"
+                                                                   TextTrimming="CharacterEllipsis" MaxWidth="480" />
+                                                        <Border Style="{StaticResource Md3.Chip}" Padding="6,1" Margin="8,0,0,0"
+                                                                Background="{DynamicResource Md3.SecondaryContainer}">
+                                                            <TextBlock Text="{Binding PlatformText}" FontSize="10"
+                                                                       Foreground="{DynamicResource Md3.OnSecondaryContainer}" />
+                                                        </Border>
+                                                        <Border Style="{StaticResource Md3.Chip}" Padding="6,1" Margin="6,0,0,0">
+                                                            <TextBlock Text="{Binding StatusText}" FontSize="10" />
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{Binding Detail}" Style="{StaticResource Md3.BodySmall}"
+                                                               TextTrimming="CharacterEllipsis" Margin="0,3,0,0" />
+                                                    <TextBlock Text="{Binding NotesText}" Style="{StaticResource Md3.LabelSmall}"
+                                                               Foreground="{DynamicResource Md3.OnSurfaceVariant}"
+                                                               Visibility="{Binding HasNotes, Converter={StaticResource BoolToVisibility}}"
+                                                               TextWrapping="Wrap" Margin="0,2,0,0" />
+                                                </StackPanel>
+
+                                                <TextBlock Grid.Column="2" Text="{Binding Model.Engine}"
+                                                           Style="{StaticResource Md3.LabelSmall}"
+                                                           VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                                        Visibility="{Binding Discovered.Count, Converter={StaticResource CountToVisibility}}">
+                                <TextBlock Text="&#xE7FC;" FontFamily="{StaticResource Md3.IconFont}" FontSize="28"
+                                           HorizontalAlignment="Center" Foreground="{DynamicResource Md3.Outline}" />
+                                <TextBlock Text="没有可显示的游戏" Style="{StaticResource Md3.BodySmall}"
+                                           HorizontalAlignment="Center" Margin="0,8,0,0" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- 第 3 步：确认 -->
+                <StackPanel Visibility="{Binding IsConfirmStep, Converter={StaticResource BoolToVisibility}}">
+                    <Border Style="{StaticResource Md3.FilledCard}" Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="{Binding SelectedCount, StringFormat=已选择 {0} 个游戏}"
+                                       Style="{StaticResource Md3.HeadlineSmall}" />
+                            <TextBlock Text="{Binding FinishSummary}" Style="{StaticResource Md3.BodyMedium}"
+                                       Foreground="{DynamicResource Md3.OnSurfaceVariant}" Margin="0,8,0,0"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="接下来会发生什么" Style="{StaticResource Md3.TitleSmall}" Margin="0,20,0,6" />
+                    <TextBlock Style="{StaticResource Md3.BodyMedium}" TextWrapping="Wrap">
+                        <Run Text="游戏加入后不会立刻扫描全盘：第一次快照会在你点「立即备份」或游戏退出时产生。" />
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource Md3.BodyMedium}" Margin="0,6,0,0" TextWrapping="Wrap"
+                               Text="存档目录会以「令牌 + 相对路径」保存，换机器后能自动展开；解析不到时会提示重新定位。" />
+
+                    <Border Style="{StaticResource Md3.OutlinedCard}" Margin="0,18,0,0" Padding="14">
+                        <StackPanel>
+                            <TextBlock Text="路径规则" Style="{StaticResource Md3.LabelLarge}" />
+                            <TextBlock Text="{Binding RulesHint}" Style="{StaticResource Md3.BodySmall}"
+                                       TextWrapping="Wrap" Margin="0,4,0,0" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <!-- 底栏 -->
+            <Grid Grid.Row="3" Margin="28,16,28,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Content="上一步" Style="{StaticResource Md3.TextButton}"
+                        Command="{Binding BackCommand}"
+                        Visibility="{Binding CanGoBack, Converter={StaticResource BoolToVisibility}}" />
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Content="取消" Style="{StaticResource Md3.TextButton}" Click="Close_OnClick" Margin="0,0,8,0" />
+                    <Button Content="保存并继续" Style="{StaticResource Md3.FilledButton}"
+                            Command="{Binding NextCommand}"
+                            Visibility="{Binding IsWebDavStep, Converter={StaticResource BoolToVisibility}}" />
+                    <Button Content="下一步" Style="{StaticResource Md3.FilledButton}"
+                            Command="{Binding NextCommand}"
+                            Visibility="{Binding IsScanStep, Converter={StaticResource BoolToVisibility}}" />
+                    <Button Content="开始使用" Style="{StaticResource Md3.FilledButton}"
+                            Command="{Binding FinishCommand}"
+                            Visibility="{Binding IsConfirmStep, Converter={StaticResource BoolToVisibility}}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

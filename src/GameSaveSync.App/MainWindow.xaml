@@ -1,0 +1,143 @@
+﻿<Window x:Class="GameSaveSync.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:pages="clr-namespace:GameSaveSync.App.Views.Pages"
+        Title="Reload" Height="820" Width="1280" MinHeight="560" MinWidth="960"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" ResizeMode="CanResize"
+        Background="{DynamicResource Md3.Surface}"
+        FontFamily="{StaticResource Md3.FontFamily}">
+
+    <shell:WindowChrome.WindowChrome>
+        <!-- CornerRadius 必须与根 Border 的圆角一致，否则边框和裁切会错位 -->
+        <shell:WindowChrome CaptionHeight="56" ResizeBorderThickness="6"
+                            CornerRadius="12" GlassFrameThickness="0"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <Border x:Name="RootBorder"
+            Background="{DynamicResource Md3.Surface}"
+            BorderBrush="{DynamicResource Md3.OutlineVariant}" BorderThickness="1"
+            CornerRadius="12" ClipToBounds="True">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="56" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- ===== 标题栏 ===== -->
+            <Grid Grid.Row="0" Background="{DynamicResource Md3.Surface}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+                    <Border Width="30" Height="30" CornerRadius="9" Background="{DynamicResource Md3.PrimaryContainer}">
+                        <TextBlock Text="&#xE74E;" FontFamily="{StaticResource Md3.IconFont}" FontSize="15"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource Md3.OnPrimaryContainer}" />
+                    </Border>
+                    <TextBlock Text="Reload" Style="{StaticResource Md3.TitleMedium}"
+                               VerticalAlignment="Center" Margin="10,0,0,0" />
+                    <Border Style="{StaticResource Md3.Chip}" Background="{DynamicResource Md3.SecondaryContainer}"
+                            Margin="10,0,0,0" Padding="8,2">
+                        <TextBlock Text="游戏存档同步" FontSize="11"
+                                   Foreground="{DynamicResource Md3.OnSecondaryContainer}" />
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button x:Name="MinimizeButton" Style="{StaticResource Md3.WindowButton}"
+                            Click="Minimize_OnClick" ToolTip="最小化">
+                        <TextBlock Text="&#xE921;" FontFamily="{StaticResource Md3.IconFont}" FontSize="12" />
+                    </Button>
+                    <Button x:Name="MaximizeButton" Style="{StaticResource Md3.WindowButton}"
+                            Click="Maximize_OnClick" ToolTip="最大化">
+                        <TextBlock x:Name="MaximizeGlyph" Text="&#xE922;"
+                                   FontFamily="{StaticResource Md3.IconFont}" FontSize="12" />
+                    </Button>
+                    <Button x:Name="CloseButton" Style="{StaticResource Md3.WindowButton}"
+                            Click="Close_OnClick" ToolTip="关闭到托盘（可在托盘退出）">
+                        <TextBlock Text="&#xE8BB;" FontFamily="{StaticResource Md3.IconFont}" FontSize="12" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- ===== 导航 + 页面 ===== -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="88" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="{DynamicResource Md3.SurfaceContainerLow}"
+                        BorderBrush="{DynamicResource Md3.OutlineVariant}" BorderThickness="0,0,1,0">
+                    <DockPanel>
+                        <ListBox DockPanel.Dock="Top"
+                                 ItemsSource="{Binding Navigation}"
+                                 SelectedIndex="{Binding CurrentPageIndex, Mode=TwoWay}"
+                                 Style="{StaticResource Md3.NavRail}"
+                                 Margin="0,10,0,0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Width="80" Margin="0,4">
+                                        <Border x:Name="Pill" Width="56" Height="32" CornerRadius="16"
+                                                Background="Transparent" HorizontalAlignment="Center">
+                                            <TextBlock x:Name="Icon" Text="{Binding Glyph}"
+                                                       FontFamily="{StaticResource Md3.IconFont}" FontSize="17"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                       Foreground="{DynamicResource Md3.OnSurfaceVariant}" />
+                                        </Border>
+                                        <TextBlock x:Name="Label" Text="{Binding Label}" FontSize="11"
+                                                   Margin="0,4,0,0" HorizontalAlignment="Center"
+                                                   Foreground="{DynamicResource Md3.OnSurfaceVariant}" />
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                     Value="True">
+                                            <Setter TargetName="Pill" Property="Background"
+                                                    Value="{DynamicResource Md3.SecondaryContainer}" />
+                                            <Setter TargetName="Icon" Property="Foreground"
+                                                    Value="{DynamicResource Md3.OnSecondaryContainer}" />
+                                            <Setter TargetName="Label" Property="Foreground"
+                                                    Value="{DynamicResource Md3.OnSurface}" />
+                                            <Setter TargetName="Label" Property="FontWeight" Value="SemiBold" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,14">
+                            <TextBlock Text="&#xE753;" FontFamily="{StaticResource Md3.IconFont}" FontSize="14"
+                                       HorizontalAlignment="Center" Foreground="{DynamicResource Md3.Outline}" />
+                            <TextBlock Text="自动备份" FontSize="10" Margin="0,4,0,0"
+                                       Foreground="{DynamicResource Md3.Outline}" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+
+                <Grid Grid.Column="1">
+                    <pages:GamesPage Visibility="{Binding IsGamesPage, Converter={StaticResource BoolToVisibility}}" />
+                    <pages:DiagnosticsPage DataContext="{Binding Diagnostics}"
+                                           Visibility="{Binding DataContext.IsDiagnosticsPage, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibility}}" />
+                    <pages:SettingsPage DataContext="{Binding Settings}"
+                                        Visibility="{Binding DataContext.IsSettingsPage, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibility}}" />
+
+                    <!-- 状态提示（Snackbar）：底部居中，避开页面内容 -->
+                    <Border VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,64"
+                            MaxWidth="780" Background="{DynamicResource Md3.InverseSurface}"
+                            CornerRadius="8" Padding="16,10"
+                            Visibility="{Binding StatusMessage, Converter={StaticResource TextToVisibility}}">
+                        <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource Md3.InverseOnSurface}" FontSize="12" />
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

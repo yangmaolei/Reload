@@ -1,0 +1,19 @@
+# 统一换行策略：仓库内一律 LF，Windows 批处理脚本例外。
+# 这样在 Windows / Linux / macOS 上协作时不会整文件变更。
+* text=auto eol=lf
+
+# 批处理与 PowerShell 脚本需要 CRLF
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# 二进制资源不做换行转换
+*.ico binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.mp3 binary
+*.wav binary

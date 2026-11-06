@@ -1,0 +1,43 @@
+<Window x:Class="GameSaveSync.App.Views.RestoreConfirmWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="确认恢复" Height="560" Width="760"
+        WindowStartupLocation="CenterOwner"
+        FontFamily="{StaticResource Md3.FontFamily}" FontSize="14"
+        Background="{DynamicResource Md3.Surface}">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" x:Name="HeaderText" Style="{StaticResource Md3.HeadlineSmall}"
+                   TextWrapping="Wrap" />
+
+        <StackPanel Grid.Row="1" Margin="0,10,0,12">
+            <TextBlock x:Name="SummaryText" Style="{StaticResource Md3.BodyMedium}"
+                       Foreground="{DynamicResource Md3.OnSurface}" TextWrapping="Wrap" />
+            <TextBlock Text="恢复前会自动创建一个 pre_restore 快照（可回到恢复前的状态）。被占用的文件会重试 3 次，仍失败则跳过并汇总报告。"
+                       Style="{StaticResource Md3.BodySmall}" TextWrapping="Wrap" Margin="0,6,0,0" />
+        </StackPanel>
+
+        <Border Grid.Row="2" Style="{StaticResource Md3.OutlinedCard}" Padding="8">
+            <DataGrid x:Name="OperationGrid" Style="{StaticResource Md3.DataGrid}"
+                      RowHeight="30" ColumnHeaderHeight="34">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="操作" Binding="{Binding KindText}" Width="80" />
+                    <DataGridTextColumn Header="文件" Binding="{Binding RelativePath}" Width="*" />
+                    <DataGridTextColumn Header="大小" Binding="{Binding SizeText}" Width="90" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="取消" Style="{StaticResource Md3.TextButton}" Click="Cancel_OnClick" IsCancel="True"
+                    Margin="0,0,8,0" />
+            <Button Content="开始恢复" Style="{StaticResource Md3.FilledButton}" Click="Ok_OnClick" IsDefault="True" />
+        </StackPanel>
+    </Grid>
+</Window>

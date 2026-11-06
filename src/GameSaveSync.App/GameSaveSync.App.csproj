@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>GameSaveSync.App</RootNamespace>
+    <AssemblyName>Reload</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <Product>Reload</Product>
+    <AssemblyTitle>Reload — 游戏存档同步</AssemblyTitle>
+    <Description>Windows 游戏存档备份与多设备同步</Description>
+    <Version>0.4.0</Version>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <!-- 这是 WPF 应用，DPI 由 manifest 的 dpiAwareness 负责；WinForms 的 DPI 检查不适用 -->
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\app.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Serilog" Version="4.4.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="System.IO" />
+    <Using Include="System.Globalization" />
+    <!-- 托盘用 WinForms 的 NotifyIcon，但不要它的隐式 using，否则与 WPF 类型冲突 -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GameSaveSync.Core\GameSaveSync.Core.csproj" />
+    <ProjectReference Include="..\GameSaveSync.Infrastructure\GameSaveSync.Infrastructure.csproj" />
+    <ProjectReference Include="..\GameSaveSync.WebDav\GameSaveSync.WebDav.csproj" />
+  </ItemGroup>
+
+</Project>

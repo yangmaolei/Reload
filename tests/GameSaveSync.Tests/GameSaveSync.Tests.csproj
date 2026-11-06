@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <RootNamespace>GameSaveSync.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\GameSaveSync.Core\GameSaveSync.Core.csproj" />
+    <ProjectReference Include="..\..\src\GameSaveSync.Infrastructure\GameSaveSync.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\GameSaveSync.WebDav\GameSaveSync.WebDav.csproj" />
+    <ProjectReference Include="..\..\src\GameSaveSync.App\GameSaveSync.App.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <!-- 启用 WinForms 后隐式 using 会切换成 WinForms 专用集合，
+         这里补回被挤掉的 System.IO / System.Net.Http，并移除会和 WPF 打架的 WinForms 集合。 -->
+    <Using Include="System.IO" />
+    <Using Include="System.Net.Http" />
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+</Project>

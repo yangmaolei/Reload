@@ -1,0 +1,103 @@
+# ============================================================
+# Reload（游戏存档同步工具）Git 忽略规则
+# 目标：只跟踪"源码 + 文档"，构建产物、依赖、本地数据一律不入库。
+# ============================================================
+
+# ── .NET 构建产物 ────────────────────────────────────────
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+publish/
+artifacts/
+*.dll
+*.pdb
+*.exe
+*.ilk
+*.exp
+*.lib
+*.cache
+*.nupkg
+*.snupkg
+
+# ── Visual Studio / Rider / VS Code ─────────────────────
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+*.dbmdl
+*.jfm
+
+# ── 测试与覆盖率产物 ─────────────────────────────────────
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+coverage*.info
+*.lcov
+
+# ── 运行期数据（应用自己生成的，不该进版本库）────────────
+#  便携模式：exe 同级的 data 目录
+data/
+/src/**/data/
+#  数据库 / WAL / 快照库
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+#  封面缓存、日志、诊断包
+covers/
+logs/
+diagnostics/
+*.log
+!docs/*.log
+*.zip
+!docs/*.zip
+portable.flag
+settings.json
+
+# ── 密钥与本机配置（务必不要入库）───────────────────────
+*.pfx
+*.p12
+*.pem
+*.key
+*.keystore
+.env
+.env.*
+!.env.example
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# ── 备份 / 临时文件 ─────────────────────────────────────
+*.bak
+*.tmp
+*.temp
+*.orig
+*.rej
+*~
+*.swp
+*.swo
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ── 截图 / 录屏（验收过程产物）──────────────────────────
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.webm
+screenshots/
+!src/GameSaveSync.App/Assets/**

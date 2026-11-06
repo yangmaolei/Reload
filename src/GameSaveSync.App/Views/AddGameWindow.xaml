@@ -1,0 +1,70 @@
+<Window x:Class="GameSaveSync.App.Views.AddGameWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="添加游戏" Height="660" Width="640"
+        WindowStartupLocation="CenterOwner"
+        FontFamily="{StaticResource Md3.FontFamily}" FontSize="14"
+        Background="{DynamicResource Md3.Surface}">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,14">
+            <TextBlock Text="手动添加游戏" Style="{StaticResource Md3.HeadlineSmall}" />
+            <TextBlock Text="如果你知道存档目录在哪，直接指定即可；不确定就用主界面的「扫描游戏」或「探测存档目录」。"
+                       Style="{StaticResource Md3.BodySmall}" TextWrapping="Wrap" Margin="0,6,0,0" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" Style="{StaticResource Md3.ScrollViewer}">
+            <StackPanel Margin="0,0,8,0">
+                <TextBlock Text="游戏名称" Style="{StaticResource Md3.FieldLabel}" />
+                <DockPanel>
+                    <Button x:Name="QueryButton" DockPanel.Dock="Right" Content="联网查询存档路径"
+                            Style="{StaticResource Md3.TonalButton}" Click="QueryOnline_OnClick" Margin="8,0,0,0" />
+                    <TextBox x:Name="NameBox" />
+                </DockPanel>
+                <TextBlock x:Name="QueryStatus" Text="" Style="{StaticResource Md3.Hint}"
+                           TextWrapping="Wrap" Margin="0,6,0,0" />
+
+                <TextBlock Text="存档目录（可添加多个）" Style="{StaticResource Md3.FieldLabel}" Margin="0,14,0,6" />
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Right" Margin="10,0,0,0">
+                        <Button Content="添加目录…" Style="{StaticResource Md3.TonalButton}" Click="AddDirectory_OnClick" />
+                        <Button Content="移除选中" Style="{StaticResource Md3.TextButton}" Click="RemoveDirectory_OnClick"
+                                Margin="0,8,0,0" />
+                    </StackPanel>
+                    <Border Style="{StaticResource Md3.OutlinedCard}" Padding="6" Height="150">
+                        <ListBox x:Name="DirectoryList" Background="Transparent" BorderThickness="0" />
+                    </Border>
+                </DockPanel>
+
+                <TextBlock Text="排除规则（分号分隔，如 *.log; cache/*）" Style="{StaticResource Md3.FieldLabel}"
+                           Margin="0,14,0,6" />
+                <TextBox x:Name="ExcludeBox" Text="*.log; *.tmp" />
+
+                <TextBlock Text="安装目录（可选，用于进程识别）" Style="{StaticResource Md3.FieldLabel}" Margin="0,14,0,6" />
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="浏览…" Style="{StaticResource Md3.OutlinedButton}"
+                            Click="BrowseInstallDir_OnClick" Margin="8,0,0,0" />
+                    <TextBox x:Name="InstallDirBox" />
+                </DockPanel>
+
+                <TextBlock Text="可执行文件名（可选，分号分隔，如 game.exe; game2.exe）"
+                           Style="{StaticResource Md3.FieldLabel}" Margin="0,14,0,6" />
+                <TextBox x:Name="ExeNamesBox" />
+
+                <TextBlock Text="路径会存成令牌形式（如 %APPDATA%\Studio\Game）。填了可执行文件名后，游戏退出会自动备份。"
+                           Style="{StaticResource Md3.Hint}" Margin="0,12,0,0" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="取消" Style="{StaticResource Md3.TextButton}" Click="Cancel_OnClick" IsCancel="True"
+                    Margin="0,0,8,0" />
+            <Button Content="确定" Style="{StaticResource Md3.FilledButton}" Click="Ok_OnClick" IsDefault="True" />
+        </StackPanel>
+    </Grid>
+</Window>

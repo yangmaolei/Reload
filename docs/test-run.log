@@ -1,0 +1,400 @@
+     2>GenerateTargetFrameworkMonikerAttribute:
+       正在跳过目标“GenerateTargetFrameworkMonikerAttribute”，因为所有输出文件相对于输入文件而言都是最新的。
+       CoreGenerateAssemblyInfo:
+       正在跳过目标“CoreGenerateAssemblyInfo”，因为所有输出文件相对于输入文件而言都是最新的。
+       _GenerateSourceLinkFile:
+         Source Link 为空，则文件 "obj\Debug\net8.0\GameSaveSync.Core.sourcelink.json" 不存在。
+       CoreCompile:
+       正在跳过目标“CoreCompile”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildDependencyFile:
+       正在跳过目标“GenerateBuildDependencyFile”，因为所有输出文件相对于输入文件而言都是最新的。
+       CopyFilesToOutputDirectory:
+         GameSaveSync.Core -> C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\src\GameSaveSync.Core\bin\Debug\net8.0\GameSaveSync.Core.dll
+     2>已完成生成项目“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\src\GameSaveSync.Core\GameSaveSync.Core.csproj”(默认目标)的操作。
+   1:8>项目“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\tests\GameSaveSync.Tests\GameSaveSync.Tests.csproj”(1:8)正在节点 4 上生成“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\src\GameSaveSync.WebDav\GameSaveSync.WebDav.csproj”(3:7) (默认目标)。
+     3>GenerateTargetFrameworkMonikerAttribute:
+       正在跳过目标“GenerateTargetFrameworkMonikerAttribute”，因为所有输出文件相对于输入文件而言都是最新的。
+   1:8>项目“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\tests\GameSaveSync.Tests\GameSaveSync.Tests.csproj”(1:8)正在节点 2 上生成“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\src\GameSaveSync.Infrastructure\GameSaveSync.Infrastructure.csproj”(4:7) (默认目标)。
+     4>GenerateTargetFrameworkMonikerAttribute:
+       正在跳过目标“GenerateTargetFrameworkMonikerAttribute”，因为所有输出文件相对于输入文件而言都是最新的。
+     3>CoreGenerateAssemblyInfo:
+       正在跳过目标“CoreGenerateAssemblyInfo”，因为所有输出文件相对于输入文件而言都是最新的。
+       _GenerateSourceLinkFile:
+         Source Link 为空，则文件 "obj\Debug\net8.0\GameSaveSync.WebDav.sourcelink.json" 不存在。
+     4>CoreGenerateAssemblyInfo:
+       正在跳过目标“CoreGenerateAssemblyInfo”，因为所有输出文件相对于输入文件而言都是最新的。
+     3>CoreCompile:
+       正在跳过目标“CoreCompile”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildDependencyFile:
+       正在跳过目标“GenerateBuildDependencyFile”，因为所有输出文件相对于输入文件而言都是最新的。
+       CopyFilesToOutputDirectory:
+         GameSaveSync.WebDav -> C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\src\GameSaveSync.WebDav\bin\Debug\net8.0\GameSaveSync.WebDav.dll
+     3>已完成生成项目“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\src\GameSaveSync.WebDav\GameSaveSync.WebDav.csproj”(默认目标)的操作。
+     4>_GenerateSourceLinkFile:
+         Source Link 为空，则文件 "obj\Debug\net8.0-windows\GameSaveSync.Infrastructure.sourcelink.json" 不存在。
+       CoreCompile:
+       正在跳过目标“CoreCompile”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildDependencyFile:
+       正在跳过目标“GenerateBuildDependencyFile”，因为所有输出文件相对于输入文件而言都是最新的。
+       CopyFilesToOutputDirectory:
+         GameSaveSync.Infrastructure -> C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\src\GameSaveSync.Infrastructure\bin\Debug\net8.0-windows\GameSaveSync.Infrastructure.dll
+     4>已完成生成项目“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\src\GameSaveSync.Infrastructure\GameSaveSync.Infrastructure.csproj”(默认目标)的操作。
+   1:8>项目“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\tests\GameSaveSync.Tests\GameSaveSync.Tests.csproj”(1:8)正在节点 1 上生成“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\src\GameSaveSync.App\GameSaveSync.App.csproj”(5:6) (默认目标)。
+     5>MainResourcesGeneration:
+       正在跳过目标“MainResourcesGeneration”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateTargetFrameworkMonikerAttribute:
+       正在跳过目标“GenerateTargetFrameworkMonikerAttribute”，因为所有输出文件相对于输入文件而言都是最新的。
+       CoreGenerateAssemblyInfo:
+       正在跳过目标“CoreGenerateAssemblyInfo”，因为所有输出文件相对于输入文件而言都是最新的。
+       _GenerateSourceLinkFile:
+         Source Link 为空，则文件 "obj\Debug\net8.0-windows\win-x64\GameSaveSync.App.sourcelink.json" 不存在。
+       CoreCompile:
+       正在跳过目标“CoreCompile”，因为所有输出文件相对于输入文件而言都是最新的。
+       _CreateAppHost:
+       正在跳过目标“_CreateAppHost”，因为所有输出文件相对于输入文件而言都是最新的。
+       _CopyOutOfDateSourceItemsToOutputDirectory:
+       正在跳过目标“_CopyOutOfDateSourceItemsToOutputDirectory”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildDependencyFile:
+       正在跳过目标“GenerateBuildDependencyFile”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildRuntimeConfigurationFiles:
+       正在跳过目标“GenerateBuildRuntimeConfigurationFiles”，因为所有输出文件相对于输入文件而言都是最新的。
+       CopyFilesToOutputDirectory:
+         GameSaveSync.App -> C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\src\GameSaveSync.App\bin\Debug\net8.0-windows\win-x64\Reload.dll
+     5>已完成生成项目“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\src\GameSaveSync.App\GameSaveSync.App.csproj”(默认目标)的操作。
+     1>GenerateTargetFrameworkMonikerAttribute:
+       正在跳过目标“GenerateTargetFrameworkMonikerAttribute”，因为所有输出文件相对于输入文件而言都是最新的。
+       CoreGenerateAssemblyInfo:
+       正在跳过目标“CoreGenerateAssemblyInfo”，因为所有输出文件相对于输入文件而言都是最新的。
+       _GenerateSourceLinkFile:
+         Source Link 为空，则文件 "obj\Debug\net8.0-windows\GameSaveSync.Tests.sourcelink.json" 不存在。
+       CoreCompile:
+       正在跳过目标“CoreCompile”，因为所有输出文件相对于输入文件而言都是最新的。
+       _CopyOutOfDateSourceItemsToOutputDirectory:
+       正在跳过目标“_CopyOutOfDateSourceItemsToOutputDirectory”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildDependencyFile:
+       正在跳过目标“GenerateBuildDependencyFile”，因为所有输出文件相对于输入文件而言都是最新的。
+       GenerateBuildRuntimeConfigurationFiles:
+       正在跳过目标“GenerateBuildRuntimeConfigurationFiles”，因为所有输出文件相对于输入文件而言都是最新的。
+       CopyFilesToOutputDirectory:
+         GameSaveSync.Tests -> C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\tests\GameSaveSync.Tests\bin\Debug\net8.0-windows\GameSaveSync.Tests.dll
+     1>已完成生成项目“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\tests\GameSaveSync.Tests\GameSaveSync.Tests.csproj”(默认目标)的操作。
+     1>BuildProject:
+         完成的生成。
+         
+C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\tests\GameSaveSync.Tests\bin\Debug\net8.0-windows\GameSaveSync.Tests.dll (.NETCoreApp,Version=v8.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.33)
+[xUnit.net 00:00:00.08]   Discovering: GameSaveSync.Tests
+[xUnit.net 00:00:00.16]   Discovered:  GameSaveSync.Tests
+[xUnit.net 00:00:00.16]   Starting:    GameSaveSync.Tests
+  已通过 GameSaveSync.Tests.M5AppLayerTests.GlobMatcher_BlankPattern_MatchesEverything [3 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.ThemePalettes_UnknownSeed_FallsBackToCompletePalette [7 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.CountToVisibility_HandlesZeroAndInvert(count: 5, parameter: null, expected: Collapsed) [6 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.CountToVisibility_HandlesZeroAndInvert(count: 0, parameter: "invert", expected: Collapsed) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.CountToVisibility_HandlesZeroAndInvert(count: -1, parameter: null, expected: Collapsed) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.CountToVisibility_HandlesZeroAndInvert(count: 5, parameter: "invert", expected: Visible) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.CountToVisibility_HandlesZeroAndInvert(count: 0, parameter: null, expected: Visible) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.ThemePalettes_EverySeedHasCompleteRoleSet(seed: Emerald) [1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.ThemePalettes_EverySeedHasCompleteRoleSet(seed: Teal) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.ThemePalettes_EverySeedHasCompleteRoleSet(seed: Indigo) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.ThemePalettes_EverySeedHasCompleteRoleSet(seed: Slate) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.ThemePalettes_EverySeedHasCompleteRoleSet(seed: Rose) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.ThemePalettes_EverySeedHasCompleteRoleSet(seed: Amber) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.Initials_UsesFirstLettersOrFallback(name: "Halo: CE", expected: "HC") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.Initials_UsesFirstLettersOrFallback(name: null, expected: "?") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.Initials_UsesFirstLettersOrFallback(name: "Hollow Knight", expected: "HK") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.Initials_UsesFirstLettersOrFallback(name: "A", expected: "A") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.Initials_UsesFirstLettersOrFallback(name: "", expected: "?") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.Initials_UsesFirstLettersOrFallback(name: "Dark Souls III", expected: "DS") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.Initials_UsesFirstLettersOrFallback(name: "   ", expected: "?") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.CountToVisibility_ConvertBack_Throws [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.HexToBrush_InvalidHex_FallsBackToTransparent [38 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.NameToBrush_IntMinValueHash_DoesNotOverflow [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.AppPaths_ObjectPath_IsLowercased [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.TextToVisibility_HandlesWhitespace(value: null, expected: Collapsed) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.TextToVisibility_HandlesWhitespace(value: "", expected: Collapsed) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.TextToVisibility_HandlesWhitespace(value: "abc", expected: Visible) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.TextToVisibility_HandlesWhitespace(value: "   ", expected: Collapsed) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.AppPaths_RejectsBlankDataRoot [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.PageToVisibility_MatchesCaseInsensitively(value: "settings", parameter: "settings", expected: Visible) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.PageToVisibility_MatchesCaseInsensitively(value: null, parameter: "settings", expected: Collapsed) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.PageToVisibility_MatchesCaseInsensitively(value: "SETTINGS", parameter: "settings", expected: Visible) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.PageToVisibility_MatchesCaseInsensitively(value: "games", parameter: "settings", expected: Collapsed) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.GlobMatcher_ExcludeWinsOverInclude [9 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BoolToVisibility_HandlesInvertAndNull(value: null, parameter: null, expected: Collapsed) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BoolToVisibility_HandlesInvertAndNull(value: False, parameter: "invert", expected: Visible) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BoolToVisibility_HandlesInvertAndNull(value: True, parameter: "invert", expected: Collapsed) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BoolToVisibility_HandlesInvertAndNull(value: True, parameter: null, expected: Visible) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BoolToVisibility_HandlesInvertAndNull(value: True, parameter: "INVERT", expected: Collapsed) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.AppPaths_EnsureCreated_IsIdempotent [9 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BytesConverter_FormatsKnownMagnitudes(bytes: 1024, expected: "1 KB") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BytesConverter_FormatsKnownMagnitudes(bytes: 1048576, expected: "1 MB") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BytesConverter_FormatsKnownMagnitudes(bytes: 0, expected: "0 B") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BytesConverter_FormatsKnownMagnitudes(bytes: 1536, expected: "1.5 KB") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BytesConverter_FormatsKnownMagnitudes(bytes: 1023, expected: "1023 B") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.Initials_ChineseName_TakesFirstCharacter [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.GlobMatcher_SingleCharWildcard(pattern: "?", value: "a", expected: True) [3 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.GlobMatcher_SingleCharWildcard(pattern: "?", value: "ab", expected: False) [1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.GlobMatcher_SingleCharWildcard(pattern: "a?c", value: "abc", expected: True) [1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.GlobMatcher_SingleCharWildcard(pattern: "a?c", value: "ac", expected: False) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.GlobMatcher_SingleCharWildcard(pattern: "?", value: "", expected: False) [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.GlobMatcher_Normalize_ConvertsSlashToBackslash [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.HexToBrush_ValidHex_ReturnsColor [1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.TriggerGlyph_UnknownTrigger_FallsBackToManual [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.ThemePalettes_LightAndDarkDiffer [2 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.OneWayConverters_ConvertBack_Throws [1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.NameToBrush_NullValue_DoesNotThrow [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.AppPaths_BucketDirectory_RequiresTwoCharHash [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.NameToBrush_IsStableForSameName [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.AppPaths_ResolveDefault_UsesReloadDirectory [3 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.NullToVisibility_EmptyStringIsStillVisible [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.GlobMatcher_EmptyIncludeMatchesEverything [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BytesConverter_NullAndInt_Work [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.AppPaths_ResolveDefault_PortableFlag_UsesProgramDirectory [3 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.AppPaths_LegacyName_IsPreservedForMigration [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.BoolToVisibility_ConvertBack_IgnoresInvert [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.StateToBrush_KnownStates_ReturnDistinctColors [1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.AppPaths_ResolveDefault_RejectsBlankBaseDirectory [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.DefaultRemoteRoot_MatchesAppName [< 1 ms]
+  已通过 GameSaveSync.Tests.M5AppLayerTests.PageToVisibility_NullValueAndNullParameter_Collapsed [< 1 ms]
+  已通过 GameSaveSync.Tests.RestoreServiceTests.Restore_ReportsLockedFileButRestoresTheRest [478 ms]
+  已通过 GameSaveSync.Tests.RestoreServiceTests.Plan_RequiresRelocateWhenTokenMissing [35 ms]
+  已通过 GameSaveSync.Tests.RestoreServiceTests.Restore_RoundTripsEveryFileByteForByte [53 ms]
+  已通过 GameSaveSync.Tests.RestoreServiceTests.Plan_ReportsUnchangedFilesWithoutTouchingThem [10 ms]
+  已通过 GameSaveSync.Tests.RestoreServiceTests.Plan_CanSkipDeletions [16 ms]
+  已通过 GameSaveSync.Tests.RestoreServiceTests.Restore_PreservesReadOnlyAttribute [22 ms]
+  已通过 GameSaveSync.Tests.RestoreServiceTests.Restore_RefusesCorruptedObjectAndKeepsFileIntact [32 ms]
+  已通过 GameSaveSync.Tests.RestoreServiceTests.Restore_CreatesPreRestoreSnapshotThatCanGoBack [49 ms]
+  已通过 GameSaveSync.Tests.WatcherIntegrationTests.SaveFolderWatcher_RaisesChangeAndOverflowFlag [348 ms]
+  已通过 GameSaveSync.Tests.WatcherIntegrationTests.ProcessWatcher_DetectsRealStartAndExitByPolling [2 s]
+  已通过 GameSaveSync.Tests.M2UnitTests.Retention_DoesNotDeleteObjectsStillReferencedByKeptSnapshots [40 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.ProcessMatcher_RequiresNameAndInstallDir(exeName: "launcher.exe", processPath: "C:\\Games\\Demo\\launcher.exe", expected: False) [< 1 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.ProcessMatcher_RequiresNameAndInstallDir(exeName: "game.exe", processPath: "C:\\Games\\Demo\\bin\\game.exe", expected: True) [< 1 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.ProcessMatcher_RequiresNameAndInstallDir(exeName: "game.exe", processPath: "C:\\Other\\game.exe", expected: False) [< 1 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.ProcessMatcher_RequiresNameAndInstallDir(exeName: "GAME.EXE", processPath: "C:\\games\\demo\\bin\\game.exe", expected: True) [< 1 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.StabilityGate_ReturnsFalseForContinuouslyGrowingFile [351 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.StabilityGate_ReturnsTrueForQuietDirectory [74 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.Outbox_EnqueueIsDedupedAndLeaseMovesToInflight [4 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.Outbox_FailSetsBackoffAndPermanentState [3 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.Fingerprints_ArePersistedAndUsedForFastPath [17 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.Retention_KeepsManualSnapshotsAndDropsOnlyOldOnes [386 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.ProcessMatcher_WithoutExeNamesNeverMatches [< 1 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.Outbox_RequeueInflightRestoresPendingAfterCrash [2 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.Backoff_GrowsExponentiallyAndCapsAtFiveMinutes [1 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.Backoff_JitterStaysWithinTwentyPercent [< 1 ms]
+  已通过 GameSaveSync.Tests.M2UnitTests.Snapshot_SkipIfUnchangedProducesNoSnapshot [12 ms]
+  已通过 GameSaveSync.Tests.M4AcceptanceTests.D1_SteamDiscovery_ToSnapshot_RoundTrip [184 ms]
+  已通过 GameSaveSync.Tests.M4AcceptanceTests.D6_ExternalRuleFile_OverridesBuiltIn [73 ms]
+  已通过 GameSaveSync.Tests.M4AcceptanceTests.D4_DiffView_ShowsAddedModifiedRemoved [69 ms]
+  已通过 GameSaveSync.Tests.M4AcceptanceTests.D5_EngineDetection_CoversFourCommonEngines [24 ms]
+  已通过 GameSaveSync.Tests.M4AcceptanceTests.D2_ProbeMode_FindsSaveDirectoryCreatedWhilePlaying [78 ms]
+  已通过 GameSaveSync.Tests.M4AcceptanceTests.D3_PortableMode_PutsDataNextToExecutable [11 ms]
+  已通过 GameSaveSync.Tests.M45Tests.ThemePalettes_AllSeedsProduceCompleteRoleSets [3 ms]
+  已通过 GameSaveSync.Tests.M45Tests.GlobalExcludes_CommentLinesAndBlanksAreIgnored [53 ms]
+  已通过 GameSaveSync.Tests.M45Tests.AppPaths_Names [< 1 ms]
+  已通过 GameSaveSync.Tests.M45Tests.ResolveDefault_MigratesLegacyGameSaveSyncDirectory [7 ms]
+  已通过 GameSaveSync.Tests.M45Tests.GlobalExcludes_AreMergedIntoEveryRoot [49 ms]
+  已通过 GameSaveSync.Tests.M45Tests.ResolveDefault_DoesNotOverwriteNewDirectory [8 ms]
+  已通过 GameSaveSync.Tests.M45Tests.ThemePalettes_DarkAndLightNeutralDiffer [< 1 ms]
+  已通过 GameSaveSync.Tests.AcceptanceTests.A6_KillDuringBackup_LeavesNoPartialObjects [1 s]
+  已通过 GameSaveSync.Tests.AcceptanceTests.A7_UnicodeSpacesAndVeryLongPathsBackupAndRestore [103 ms]
+  已通过 GameSaveSync.Tests.AcceptanceTests.A8_ReadOnlyFileRestoredWithContentAndAttribute [77 ms]
+  已通过 GameSaveSync.Tests.AcceptanceTests.A4_PreRestoreSnapshotExistsAndCanRevert [83 ms]
+  已通过 GameSaveSync.Tests.AcceptanceTests.A2_ModifyOneSaveFile_BothSnapshotsKeptAndBothObjectsPresent [81 ms]
+  已通过 GameSaveSync.Tests.AcceptanceTests.A3_RestoreFirstSnapshot_AllFilesByteIdentical [104 ms]
+  已通过 GameSaveSync.Tests.AcceptanceTests.A5_OfflineBackupStaysLocalThenRetryUploads [186 ms]
+  已通过 GameSaveSync.Tests.AcceptanceTests.A1_LargeSaveSet_SnapshotCountsMatchReality [23 s]
+  已通过 GameSaveSync.Tests.PathTokenTests.GlobMatcher_DoubleStarCrossesDirectories [2 ms]
+  已通过 GameSaveSync.Tests.PathTokenTests.Expand_ThrowsForUnknownToken [< 1 ms]
+  已通过 GameSaveSync.Tests.PathTokenTests.TryExpand_ReportsMissingTokenWithoutThrowing [< 1 ms]
+  已通过 GameSaveSync.Tests.PathTokenTests.Tokenize_ReturnsNullForUnknownRoot [< 1 ms]
+  已通过 GameSaveSync.Tests.PathTokenTests.Tokenize_RoundTripsBackToToken [< 1 ms]
+  已通过 GameSaveSync.Tests.PathTokenTests.SaveRootResolver_MarksGameNeedsRelocateWhenTokenMissing [1 ms]
+  已通过 GameSaveSync.Tests.PathTokenTests.Tokenize_UsesLongestPrefixMatch [< 1 ms]
+  已通过 GameSaveSync.Tests.PathTokenTests.GlobMatcher_HandlesCommonPatterns [11 ms]
+  已通过 GameSaveSync.Tests.PathTokenTests.Expand_ResolvesAllSupportedTokens [< 1 ms]
+  已通过 GameSaveSync.Tests.M3ConflictTests.Exporter_WritesZipWithAllFiles [2 s]
+  已通过 GameSaveSync.Tests.M3ConflictTests.ConflictView_ShowsBothSidesWithDiffAndResolves [2 s]
+  已通过 GameSaveSync.Tests.M4SupportTests.RuleSample_IsWrittenOnceAndParses [37 ms]
+  已通过 GameSaveSync.Tests.M4SupportTests.PortableMode_UsesProgramDirectoryWhenFlagExists [4 ms]
+  已通过 GameSaveSync.Tests.M4SupportTests.ProbeService_RanksChangedSaveDirectory [16 ms]
+  已通过 GameSaveSync.Tests.M4SupportTests.CoverService_UsesCacheAndSteamCdnUri [14 ms]
+  已通过 GameSaveSync.Tests.M4SupportTests.ProbeService_IgnoresBinaryPatchDirectories [11 ms]
+  已通过 GameSaveSync.Tests.M4SupportTests.Diagnostics_RedactsSecretsAndExportsZip [106 ms]
+  已通过 GameSaveSync.Tests.M4SupportTests.SnapshotDiff_ComputesAddModifyRemove [68 ms]
+  已通过 GameSaveSync.Tests.M3AcceptanceTests.C4_MissingGameFolder_NeedsRelocateUntilUserMapsIt [125 ms]
+  已通过 GameSaveSync.Tests.M3AcceptanceTests.C5_TruncatedRemoteObject_FailsLoudlyAndCanBeRetransferred [121 ms]
+  已通过 GameSaveSync.Tests.M3AcceptanceTests.C3_PreconditionFailedOnIndex_MergesAndLosesNothing [240 ms]
+  已通过 GameSaveSync.Tests.M3AcceptanceTests.C6_CorruptIndex_RebuildsInsteadOfCrashing [117 ms]
+  已通过 GameSaveSync.Tests.M3AcceptanceTests.C1_BackupOnA_SeenByBWithin60s_RestoredByteIdentical [196 ms]
+  已通过 GameSaveSync.Tests.M3AcceptanceTests.C8_DeviceRegistration_IsVisibleToBothSides [83 ms]
+  已通过 GameSaveSync.Tests.M3AcceptanceTests.C2_BothDevicesEdit_ConflictMarkedAndNoSnapshotLost [2 s]
+  已通过 GameSaveSync.Tests.M3AcceptanceTests.C7_PollingVolumeMatchesSixtySecondCadence [124 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.ObjectRepository_DecrementReferences_OnlyReturnsRequestedHashes [38 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.WebDavClient_PutAsync_ServerError_Throws [4 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.RemoteIndex_PublishWithoutETag_DoesNotLoseOtherDeviceEntries [98 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Outbox_ForceDue_ResurrectsFailedItem [35 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Snapshot_TwoRootsWithSameFileName_Succeeds [53 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.ObjectRepository_RegisterSameHashTwice_ReferenceCountIsSymmetric [34 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.ObjectStore_BucketCreationFailure_CanBeRetried [44 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Settings_GetDeviceId_IsUniqueUnderConcurrency [37 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Outbox_RequeueInflight_ResetsInflightToPending [33 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.OutboxProcessor_CancelledOperation_RequeuesItemInsteadOfStuckInflight [35 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Outbox_LeaseDue_ReturnsNullWhenEmpty [34 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Probe_DeletedFile_IsReportedAsChange [39 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Provider_FormatVersion2_PlainStringWikitext_IsParsed [8 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.MiniYaml_KeyWithoutSpaceAfterColon_IsParsed [< 1 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Outbox_ResetFailed_ClearsAttemptsAndState [36 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.ObjectRepository_RegisterAcrossTwoSnapshots_NeedsTwoReleases [35 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Outbox_GetLastError_ReturnsNullWhenNoError [33 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.ConflictService_ShortDeviceId_DoesNotCrash [63 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Restore_GlobalExcludedFile_IsNotDeleted [66 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Outbox_Enqueue_RejectsBlankOp [35 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Restore_RelativePathEscape_IsRejected [55 ms]
+  已通过 GameSaveSync.Tests.M5RegressionTests.Importer_ManifestGameIdMismatch_Throws [102 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.MergeKeepsUnionOfAllGames [< 1 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.Publish_RetriesAfter412AndKeepsBothGames [173 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.Rule2_OnlyLocal_WinsLocal [< 1 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.Rule5_LocalHigherButForked_MarksConflictAndKeepsNewerSnapshotId [< 1 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.Rule3_SameDevice_HigherSeqWins [< 1 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.Rule4_LocalHigherAndRelated_NormalAdvanceWithoutConflict [< 1 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.Pull_UsesIfNoneMatchAndGetsNotModified [81 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.Publish_WritesIndexAndIncrementsSeq [109 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.RemoteConflictFlagSurvivesWhenRemoteWins [< 1 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.Serializer_RoundTripsAndRejectsGarbage [< 1 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.Rule6_RemoteSeqHigherOrEqual_WinsRemote [< 1 ms]
+  已通过 GameSaveSync.Tests.M3IndexTests.Rule1_OnlyRemote_WinsRemote [< 1 ms]
+  已通过 GameSaveSync.Tests.MOnlineTests.CoverService_RejectsNonNumericAppId [< 1 ms]
+  已通过 GameSaveSync.Tests.MOnlineTests.Provider_QueriesSearchThenWikitext [1 ms]
+  已通过 GameSaveSync.Tests.MOnlineTests.Provider_ReturnsEmptyOnNonJson [< 1 ms]
+  已通过 GameSaveSync.Tests.MOnlineTests.Parser_ExpandsSavesTemplateToTokenPath [1 ms]
+  已通过 GameSaveSync.Tests.MOnlineTests.Parser_SkipsRegistryPaths [< 1 ms]
+  已通过 GameSaveSync.Tests.MOnlineTests.Parser_KeepsInstallDirPlaceholder [< 1 ms]
+  已通过 GameSaveSync.Tests.MOnlineTests.Parser_Deduplicates [< 1 ms]
+  已通过 GameSaveSync.Tests.MOnlineTests.CoverService_BuildsPortraitAndHeaderUris [< 1 ms]
+  已通过 GameSaveSync.Tests.MOnlineTests.Parser_ExpandsConfigAndAppdataTokens [< 1 ms]
+  已通过 GameSaveSync.Tests.MOnlineTests.Provider_ReturnsEmptyOnHttpError [< 1 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Database_OldSchema_MigratesSnapshotFilesPrimaryKey [65 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.IndexSerializer_RejectsGarbage [< 1 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Diagnostics_RedactsSecrets [34 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.IndexSerializer_RoundTrips [< 1 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.ObjectStore_NormalizeHash_RejectsBlank [35 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.PathToken_Tokenize_DoesNotMatchPrefixByName [< 1 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Database_ConcurrentWrites_DoNotDeadlock [44 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Database_Initialize_IsIdempotent [34 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Snapshot_GlobalExclude_MultipleLinesAndComments [51 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.ObjectStore_WrongHash_ThrowsAndLeavesNoResidue [41 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.RemoteDevice_AppVersion_IsNotHardcoded [43 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Retention_NoSnapshots_ReturnsEmptyPlan [35 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Snapshot_ContentChanges_CreatesNewSnapshotWithParentLink [52 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.IndexMerger_SameSeq_DoesNotStealFromOtherDevice [< 1 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.ObjectStore_SameContentDifferentCaseHash_IsIdempotent [38 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Snapshot_EmptyDirectory_ThrowsNoFilesFound [36 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Retention_ManualSnapshot_IsNeverPruned [58 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Poller_NotConfigured_DoesNotLogFailure [33 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.IndexMerger_EmptyDocuments_ProduceEmptyResult [< 1 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Snapshot_MissingRoot_ThrowsNeedsRelocate [34 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Retention_AcrossDays_KeepsOnePerDay [74 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.RefreshDevices_NotConfigured_DoesNotLogWarning [34 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Snapshot_UnknownGame_Throws [37 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Retention_Apply_EmptyPlan_IsNoop [34 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Upload_NotConfigured_ReportsPending [44 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.PathToken_UnknownToken_Throws [< 1 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Upload_UnknownSnapshot_ReportsFailure [35 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Snapshot_GlobalExclude_IsAppliedImmediately [49 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Retention_UnknownGame_Throws [35 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Diagnostics_Report_HasSections [34 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Upload_NoPending_ReturnsEmpty [35 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.Snapshot_IdenticalContent_SecondRunSkipsCreation [47 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.PathToken_Expand_PreservesUnclosedPercent [< 1 ms]
+  已通过 GameSaveSync.Tests.M5CoreEdgeTests.PathToken_TryExpand_DoesNotThrow [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_PlatformText_MapsKnownSources(source: Uwp, expected: "UWP") [1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_PlatformText_MapsKnownSources(source: Manual, expected: "手动") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_PlatformText_MapsKnownSources(source: Steam, expected: "Steam") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_PlatformText_MapsKnownSources(source: Epic, expected: "Epic") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_PlatformText_MapsKnownSources(source: Ubisoft, expected: "Ubisoft") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_PlatformText_MapsKnownSources(source: Gog, expected: "GOG") [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.Scheduler_StartTwice_IsIdempotent [35 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_RootSummary_ListsUpToTwoRoots [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.OutboxPayloads_MalformedPayload_Throws [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_Refresh_WithSnapshot_ShowsPending [48 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.OutboxBackoff_GrowsAndCaps [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.Scheduler_Paused_SkipsCapture [568 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.OutboxPayloads_RoundTrip [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.ProviderAdapter_RateLimited_StillStoresContent [3 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.Scheduler_StopWithoutStart_DoesNotThrow [35 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.ProviderAdapter_Generic_UsesSinglePut [2 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_RootSummary_TwoRootsHasNoSuffix [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.SnapshotItem_NoSkipped_ShowsPlainCount [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_Refresh_NeedsRelocate_TakesPrecedence [45 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.Scheduler_GameExited_TriggersSnapshot [665 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.SnapshotItem_FileCountText_ShowsSkippedCount [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.SnapshotItem_ZeroTimestamp_ShowsPlaceholder [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_Refresh_NoSnapshots_ShowsNeverBackedUp [33 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.GameItem_Detail_ShowsRelocateHint [< 1 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.Scheduler_PauseThenResume_Works [34 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.ProviderAdapter_SmallFile_UsesSinglePut [3 ms]
+  已通过 GameSaveSync.Tests.M5ViewModelAndProviderTests.OutboxBackoff_NeverBelowFloor [< 1 ms]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.Upload_NotConfiguredKeepsSnapshotPending [52 ms]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.GenericProvider_UploadsInOnePut [9 ms]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.Upload_RetrySucceedsAfterServerRecovers [45 ms]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.Upload_NetworkDownProducesPendingNotException [12 s]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.NextcloudProvider_UsesChunkedUploadAndLandsExactContent [25 ms]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.Upload_HandlesUnicodeSavePaths(relativeDir: "emoji-🎮-save") [29 ms]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.Upload_HandlesUnicodeSavePaths(relativeDir: "中文游戏/存档 目录") [26 ms]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.TestConnection_ReportsAuthenticationFailure [3 ms]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.UploadPending_ResendsAllPendingSnapshots [142 ms]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.TestConnection_CreatesDirectoryWritesProbeAndCleansUp [7 ms]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.Upload_FailureKeepsLocalSnapshotAndMarksPending [19 ms]
+  已通过 GameSaveSync.Tests.WebDavSyncTests.Upload_PutsObjectsThenManifestAndMarksUploaded [35 ms]
+  已通过 GameSaveSync.Tests.ObjectStoreTests.OpenRead_ThrowsForMissingObject [< 1 ms]
+  已通过 GameSaveSync.Tests.ObjectStoreTests.StagedObject_DisposeWithoutCommitDeletesTemp [5 ms]
+  已通过 GameSaveSync.Tests.ObjectStoreTests.PutAsync_RejectsHashMismatchAndLeavesNoTempFile [8 ms]
+  已通过 GameSaveSync.Tests.ObjectStoreTests.CleanupTemporaryFiles_RemovesCrashLeftovers [1 ms]
+  已通过 GameSaveSync.Tests.ObjectStoreTests.StageAndCommit_WritesContentAddressedLayout [12 ms]
+  已通过 GameSaveSync.Tests.ObjectStoreTests.PutAsync_AcceptsMatchingHash [5 ms]
+  已通过 GameSaveSync.Tests.ObjectStoreTests.Commit_IsIdempotentForSameContent [10 ms]
+  已通过 GameSaveSync.Tests.M2AcceptanceTests.B7_GfsRetentionKeepsRecentAndManualSnapshots [518 ms]
+  已通过 GameSaveSync.Tests.M2AcceptanceTests.B3_CrashDuringOutboxProcessing_NoPartialObjectsNoLostItemsNoDuplicates [123 ms]
+  已通过 GameSaveSync.Tests.M2AcceptanceTests.B9_PausedSchedulerSkipsAutomaticSnapshots [784 ms]
+  已通过 GameSaveSync.Tests.M2AcceptanceTests.B8_ChangesWhileAppWasClosedAreCaughtUpAtStartup [164 ms]
+  已通过 GameSaveSync.Tests.M2AcceptanceTests.B2_IdleSnapshotUsesThrottledBackgroundIo [1 s]
+  已通过 GameSaveSync.Tests.M2AcceptanceTests.B6_TwentyRapidWritesProduceExactlyOneSnapshot [2 s]
+  已通过 GameSaveSync.Tests.M2AcceptanceTests.B4_OfflineFiveSnapshots_AllUploadInOrderWithoutDuplicates [242 ms]
+  已通过 GameSaveSync.Tests.M2AcceptanceTests.B5_TouchOnlyChangeDoesNotCreateNewSnapshot [1 s]
+  已通过 GameSaveSync.Tests.M2AcceptanceTests.B1_GameExit_ProducesExitSnapshotWithinFiveSecondsAndUploads [454 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_ReusesObjectsForUnchangedFiles [24 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_ClearsNeedsRelocateFlagAfterSuccessfulBackup [16 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_ThrowsNeedsRelocateWhenDirectoryDeleted [4 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_CapturesRecursiveTreeWithCorrectCounts [24 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_SetsParentIdChain [18 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_KeepsBothSnapshotsAndBothObjectsAfterModification [14 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_StoresManifestOnDiskAndWritesDeviceId [16 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_HonorsExcludePatterns [15 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_RecordsSkippedFilesInManifest [16 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_RefusesEmptySnapshotWhenDirectoryHasNoFiles [2 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_BacksUpAvailableRootAndFlagsWhenAnotherRootMissing [14 ms]
+  已通过 GameSaveSync.Tests.SnapshotServiceTests.CreateAsync_SkipsLockedFileButKeepsSnapshot [11 ms]
+  已通过 GameSaveSync.Tests.M4LocatorTests.EpicLocator_ParsesManifestJson [49 ms]
+  已通过 GameSaveSync.Tests.M4LocatorTests.UwpLocator_FindsWgsContainer [15 ms]
+  已通过 GameSaveSync.Tests.M4LocatorTests.GogLocator_ReadsGoggameInfo [19 ms]
+  已通过 GameSaveSync.Tests.M4LocatorTests.SavePathResolver_FindsMyGamesByRule [25 ms]
+[xUnit.net 00:01:06.83]   Finished:    GameSaveSync.Tests
+  已通过 GameSaveSync.Tests.M4LocatorTests.VdfParser_ParsesNestedBlocksAndEscapes [9 ms]
+  已通过 GameSaveSync.Tests.M4LocatorTests.SavePathRuleSet_ExternalOverrideReplacesAndAdds [46 ms]
+  已通过 GameSaveSync.Tests.M4LocatorTests.SteamLocator_DiscoversGameAcrossLibraries [34 ms]
+  已通过 GameSaveSync.Tests.M4LocatorTests.SavePathResolver_UsesUnityLocalLowRadar [30 ms]
+  已通过 GameSaveSync.Tests.M4LocatorTests.UbisoftLocator_ListsSaveFolders [18 ms]
+  已通过 GameSaveSync.Tests.M4LocatorTests.GameDiscovery_MarksAlreadyAddedAndSkipsDuplicates [135 ms]
+
+测试运行成功。
+测试总数: 298
+     通过数: 298
+总时间: 1.1229 分钟
+     1>已完成生成项目“C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync\tests\GameSaveSync.Tests\GameSaveSync.Tests.csproj”(VSTest 个目标)的操作。
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:01:10.50

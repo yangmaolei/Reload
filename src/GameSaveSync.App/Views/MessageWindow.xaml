@@ -1,0 +1,55 @@
+﻿<Window x:Class="GameSaveSync.App.Views.MessageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Reload" Width="480" SizeToContent="Height"
+        WindowStyle="None" Background="{DynamicResource Md3.SurfaceContainerHigh}"
+        ResizeMode="NoResize" ShowInTaskbar="False"
+        FontFamily="{StaticResource Md3.FontFamily}"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="ClearType"
+        UseLayoutRounding="True"
+        MouseLeftButtonDown="Window_OnMouseLeftButtonDown">
+
+    <!-- 圆角用 WindowChrome 而非 AllowsTransparency：
+         layered window 会关闭 ClearType 子像素渲染（彩色边缘占比 58% → 9%），文字发糊。 -->
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="0"
+                            CornerRadius="28" GlassFrameThickness="0"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <Border CornerRadius="28" Background="{DynamicResource Md3.SurfaceContainerHigh}">
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <Border x:Name="IconHost" Width="40" Height="40" CornerRadius="20"
+                        Background="{DynamicResource Md3.PrimaryContainer}" VerticalAlignment="Top">
+                    <TextBlock x:Name="IconText" Text="&#xE946;" FontFamily="{StaticResource Md3.IconFont}"
+                               FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="{DynamicResource Md3.OnPrimaryContainer}" />
+                </Border>
+                <TextBlock x:Name="TitleText" Text="提示" Style="{StaticResource Md3.HeadlineSmall}"
+                           FontSize="20" Margin="16,6,0,0" TextWrapping="Wrap" />
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1" MaxHeight="360" Margin="0,16,0,0"
+                          VerticalScrollBarVisibility="Auto">
+                <TextBlock x:Name="MessageText" Style="{StaticResource Md3.BodyMedium}"
+                           Foreground="{DynamicResource Md3.OnSurfaceVariant}" TextWrapping="Wrap" />
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0">
+                <Button x:Name="CancelButton" Content="取消" Style="{StaticResource Md3.TextButton}"
+                        Margin="0,0,8,0" Click="Cancel_OnClick" />
+                <Button x:Name="OkButton" Content="知道了" Style="{StaticResource Md3.FilledButton}"
+                        Click="Ok_OnClick" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

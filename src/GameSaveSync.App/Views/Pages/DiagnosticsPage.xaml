@@ -1,0 +1,221 @@
+﻿<UserControl x:Class="GameSaveSync.App.Views.Pages.DiagnosticsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:GameSaveSync.App.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:DiagnosticsViewModel}"
+             Background="{DynamicResource Md3.Surface}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="28,24,28,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <TextBlock Text="诊断" Style="{StaticResource Md3.PageTitle}" />
+                <TextBlock Text="队列、存储、日志与连接状态；导出包已自动脱敏" Style="{StaticResource Md3.BodySmall}" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Style="{StaticResource Md3.TonalButton}"
+                        Command="{Binding LoadCommand}" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE72C;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                            <TextBlock Text="刷新" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                <Button Style="{StaticResource Md3.OutlinedButton}"
+                        Command="{Binding TestConnectionCommand}" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE753;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                            <TextBlock Text="测试连接" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                <Button Style="{StaticResource Md3.FilledButton}"
+                        Command="{Binding ExportCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xEDE1;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                            <TextBlock Text="导出诊断包" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" Style="{StaticResource Md3.ScrollViewer}">
+            <StackPanel Margin="24,0,24,72">
+
+                <!-- 关键指标 -->
+                <UniformGrid Columns="4" Margin="4,0,4,16">
+                    <Border Style="{StaticResource Md3.FilledCard}" Margin="0,0,12,0">
+                        <StackPanel>
+                            <TextBlock Text="快照" Style="{StaticResource Md3.LabelMedium}" />
+                            <TextBlock Text="{Binding Report.Storage.Snapshots, TargetNullValue=—}"
+                                       Style="{StaticResource Md3.HeadlineSmall}" Margin="0,6,0,0" />
+                            <TextBlock Text="{Binding Report.Storage.Games, StringFormat={}{0} 个游戏}"
+                                       Style="{StaticResource Md3.BodySmall}" Margin="0,2,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Md3.FilledCard}" Margin="0,0,12,0">
+                        <StackPanel>
+                            <TextBlock Text="待上传" Style="{StaticResource Md3.LabelMedium}" />
+                            <TextBlock Text="{Binding Report.Storage.PendingSnapshots, TargetNullValue=—}"
+                                       Style="{StaticResource Md3.HeadlineSmall}" Margin="0,6,0,0" />
+                            <TextBlock Text="{Binding OutboxSummary}" Style="{StaticResource Md3.BodySmall}"
+                                       Margin="0,2,0,0" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Md3.FilledCard}" Margin="0,0,12,0">
+                        <StackPanel>
+                            <TextBlock Text="对象占用" Style="{StaticResource Md3.LabelMedium}" />
+                            <TextBlock Text="{Binding Report.Storage.ObjectBytes, Converter={StaticResource Bytes}, TargetNullValue=—}"
+                                       Style="{StaticResource Md3.HeadlineSmall}" Margin="0,6,0,0" />
+                            <TextBlock Text="{Binding Report.Storage.Objects, StringFormat={}{0} 个对象}"
+                                       Style="{StaticResource Md3.BodySmall}" Margin="0,2,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Md3.FilledCard}">
+                        <StackPanel>
+                            <TextBlock Text="数据库" Style="{StaticResource Md3.LabelMedium}" />
+                            <TextBlock Text="{Binding Report.Storage.DatabaseBytes, Converter={StaticResource Bytes}, TargetNullValue=—}"
+                                       Style="{StaticResource Md3.HeadlineSmall}" Margin="0,6,0,0" />
+                            <TextBlock Text="{Binding PortableText}" Style="{StaticResource Md3.BodySmall}"
+                                       Margin="0,2,0,0" />
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <Grid Margin="4,0,4,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 队列 -->
+                    <Border Grid.Column="0" Style="{StaticResource Md3.OutlinedCard}">
+                        <DockPanel>
+                            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                                <TextBlock DockPanel.Dock="Right" Text="{Binding Outbox.Count, StringFormat={}{0} 项}"
+                                           Style="{StaticResource Md3.LabelMedium}" />
+                                <TextBlock Text="上传队列" Style="{StaticResource Md3.TitleMedium}" />
+                            </DockPanel>
+
+                            <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8"
+                                        Visibility="{Binding Outbox.Count, Converter={StaticResource CountToVisibility}}">
+                                <TextBlock Text="队列为空：没有待重试的网络操作" Style="{StaticResource Md3.BodySmall}" />
+                            </StackPanel>
+
+                            <ListBox ItemsSource="{Binding Outbox}" Style="{StaticResource Md3.ListBox}"
+                                     MaxHeight="260" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border Grid.Column="0" Style="{StaticResource Md3.Chip}" Padding="8,1">
+                                                <TextBlock Text="{Binding State}" FontSize="11" />
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="10,0,8,0">
+                                                <TextBlock Text="{Binding Op}" Style="{StaticResource Md3.BodySmall}"
+                                                           Foreground="{DynamicResource Md3.OnSurface}" />
+                                                <TextBlock Text="{Binding LastError}" Style="{StaticResource Md3.LabelSmall}"
+                                                           Foreground="{DynamicResource Md3.Error}"
+                                                           TextTrimming="CharacterEllipsis" MaxWidth="420" />
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="2" Text="{Binding Attempts, StringFormat=重试 {0} 次}"
+                                                       Style="{StaticResource Md3.LabelSmall}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DockPanel>
+                    </Border>
+
+                    <!-- 环境 -->
+                    <Border Grid.Column="2" Style="{StaticResource Md3.FilledCard}">
+                        <StackPanel>
+                            <TextBlock Text="运行环境" Style="{StaticResource Md3.TitleMedium}" Margin="0,0,0,12" />
+
+                            <TextBlock Text="数据目录" Style="{StaticResource Md3.LabelMedium}" />
+                            <TextBlock Text="{Binding DataRootText}" Style="{StaticResource Md3.BodySmall}"
+                                       TextWrapping="Wrap" Margin="0,2,0,10" Foreground="{DynamicResource Md3.OnSurface}" />
+
+                            <TextBlock Text="设备" Style="{StaticResource Md3.LabelMedium}" />
+                            <TextBlock Style="{StaticResource Md3.BodySmall}" TextWrapping="Wrap" Margin="0,2,0,10"
+                                       Foreground="{DynamicResource Md3.OnSurface}">
+                                <Run Text="{Binding Report.DeviceName, Mode=OneWay, TargetNullValue=—}" />
+                                <Run Text=" / " />
+                                <Run Text="{Binding Report.DeviceId, Mode=OneWay, TargetNullValue=—}" />
+                            </TextBlock>
+
+                            <TextBlock Text="远端" Style="{StaticResource Md3.LabelMedium}" />
+                            <TextBlock Text="{Binding RemoteText}" Style="{StaticResource Md3.BodySmall}"
+                                       TextWrapping="Wrap" Margin="0,2,0,10" Foreground="{DynamicResource Md3.OnSurface}" />
+
+                            <TextBlock Text="{Binding StatusText}" Style="{StaticResource Md3.BodySmall}"
+                                       Foreground="{DynamicResource Md3.Primary}" TextWrapping="Wrap" />
+
+                            <Button Style="{StaticResource Md3.OutlinedButton}"
+                                    Command="{Binding OpenDataFolderCommand}" HorizontalAlignment="Left" Margin="0,14,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE838;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                            <TextBlock Text="打开数据目录" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- 日志 -->
+                <Border Style="{StaticResource Md3.OutlinedCard}" Margin="4,0,4,12">
+                    <DockPanel>
+                        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                            <TextBlock DockPanel.Dock="Right" Text="最近 200 条" Style="{StaticResource Md3.LabelMedium}" />
+                            <TextBlock Text="同步日志" Style="{StaticResource Md3.TitleMedium}" />
+                        </DockPanel>
+
+                        <ListBox ItemsSource="{Binding Logs}" Style="{StaticResource Md3.ListBox}"
+                                 Height="300" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.VirtualizationMode="Recycling">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="92" />
+                                            <ColumnDefinition Width="52" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Time}"
+                                                   FontFamily="{StaticResource Md3.MonoFont}" FontSize="11"
+                                                   Foreground="{DynamicResource Md3.OnSurfaceVariant}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Level}" FontSize="11"
+                                                   Foreground="{Binding Level, Converter={StaticResource LogLevelToBrush}}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Message}" FontSize="12"
+                                                   TextWrapping="Wrap" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

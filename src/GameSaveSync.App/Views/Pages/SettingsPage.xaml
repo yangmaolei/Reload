@@ -1,0 +1,299 @@
+﻿<UserControl x:Class="GameSaveSync.App.Views.Pages.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:GameSaveSync.App.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:SettingsViewModel}"
+             Background="{DynamicResource Md3.Surface}">
+
+    <ScrollViewer Style="{StaticResource Md3.ScrollViewer}">
+        <StackPanel Margin="28,24,28,80" MaxWidth="860" HorizontalAlignment="Left">
+
+            <TextBlock Text="设置" Style="{StaticResource Md3.PageTitle}" />
+            <TextBlock Text="凭据用 DPAPI 加密存在本机，不会写入日志" Style="{StaticResource Md3.BodySmall}" Margin="0,0,0,16" />
+
+            <!-- WebDAV -->
+            <Border Style="{StaticResource Md3.OutlinedCard}" Margin="0,0,0,16">
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,4">
+                        <Border DockPanel.Dock="Right" Style="{StaticResource Md3.Chip}" Padding="8,2">
+                            <TextBlock Text="{Binding StatusText}" FontSize="11" TextTrimming="CharacterEllipsis"
+                                       MaxWidth="420" />
+                        </Border>
+                        <TextBlock Text="WebDAV 远端" Style="{StaticResource Md3.TitleMedium}" />
+                    </DockPanel>
+                    <TextBlock Text="支持 Nextcloud / ownCloud、坚果云、群晖、Alist 等通用 WebDAV"
+                               Style="{StaticResource Md3.BodySmall}" Margin="0,0,0,14" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="服务地址" Style="{StaticResource Md3.FieldLabel}" />
+                            <TextBox Text="{Binding BaseUrl, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="例如 https://dav.jianguoyun.com/dav/" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="远程根目录" Style="{StaticResource Md3.FieldLabel}" />
+                            <TextBox Text="{Binding RemoteRoot, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="用户名" Style="{StaticResource Md3.FieldLabel}" />
+                            <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="应用密码" Style="{StaticResource Md3.FieldLabel}" />
+                            <PasswordBox x:Name="PasswordBox" PasswordChanged="PasswordBox_OnPasswordChanged" />
+                            <TextBlock Text="留空表示沿用已保存的密码" Style="{StaticResource Md3.Hint}"
+                                       Visibility="{Binding HasStoredPassword, Converter={StaticResource BoolToVisibility}}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Margin="0,12,0,0">
+                        <TextBlock Text="自签名证书 SHA-256 指纹（可选）" Style="{StaticResource Md3.FieldLabel}" />
+                        <TextBox Text="{Binding CertificateThumbprint, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                        <Button Style="{StaticResource Md3.OutlinedButton}"
+                                Command="{Binding TestCommand}" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE753;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                            <TextBlock Text="测试连接" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                        <Button Style="{StaticResource Md3.FilledButton}"
+                                Command="{Binding SaveCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE74E;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                            <TextBlock Text="保存配置" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 外观 -->
+            <Border Style="{StaticResource Md3.OutlinedCard}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="外观" Style="{StaticResource Md3.TitleMedium}" Margin="0,0,0,12" />
+
+                    <TextBlock Text="主题色" Style="{StaticResource Md3.FieldLabel}" />
+                    <ItemsControl ItemsSource="{Binding ThemeSwatches}" Margin="0,4,0,4">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Margin="0,0,10,0" Click="SeedSwatch_OnClick" Tag="{Binding}"
+                                        ToolTip="{Binding Name, StringFormat=主题：{0}}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Grid Width="40" Height="40">
+                                                <Ellipse x:Name="Dot" Width="32" Height="32"
+                                                         Fill="{Binding LightHex, Converter={StaticResource HexToBrush}}">
+                                                    <Ellipse.Effect>
+                                                        <DropShadowEffect BlurRadius="6" ShadowDepth="1" Opacity="0.35" />
+                                                    </Ellipse.Effect>
+                                                </Ellipse>
+                                                <Ellipse x:Name="Ring" Width="40" Height="40"
+                                                         StrokeThickness="2" Stroke="Transparent" />
+                                                <TextBlock Text="&#xE73E;" FontFamily="{StaticResource Md3.IconFont}"
+                                                           FontSize="14" Foreground="White"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                           x:Name="Check" Visibility="Collapsed" />
+                                            </Grid>
+                                            <ControlTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="Ring" Property="Stroke"
+                                                            Value="{DynamicResource Md3.Primary}" />
+                                                    <Setter TargetName="Check" Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Dot" Property="Width" Value="34" />
+                                                    <Setter TargetName="Dot" Property="Height" Value="34" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="外观模式" Style="{StaticResource Md3.FieldLabel}" Margin="0,10,0,0" />
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                        <RadioButton x:Name="ModeSystem" Content="跟随系统" GroupName="ThemeMode" Margin="0,0,20,0"
+                                     Checked="ThemeMode_OnChecked" Tag="0" Style="{StaticResource Md3.Radio}" />
+                        <RadioButton x:Name="ModeLight" Content="亮色" GroupName="ThemeMode" Margin="0,0,20,0"
+                                     Checked="ThemeMode_OnChecked" Tag="1" Style="{StaticResource Md3.Radio}" />
+                        <RadioButton x:Name="ModeDark" Content="暗色" GroupName="ThemeMode"
+                                     Checked="ThemeMode_OnChecked" Tag="2" Style="{StaticResource Md3.Radio}" />
+                    </StackPanel>
+                    <TextBlock Text="切换立即生效并记住；跟随系统时，Windows 深色模式会自动套用暗色。"
+                               Style="{StaticResource Md3.Hint}" Margin="0,4,0,0" />
+                </StackPanel>
+            </Border>
+
+            <!-- 自动化 -->
+            <Border Style="{StaticResource Md3.OutlinedCard}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="自动化" Style="{StaticResource Md3.TitleMedium}" Margin="0,0,0,12" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="开机自启" Style="{StaticResource Md3.LabelLarge}" />
+                            <TextBlock Text="登录后自动在托盘运行，继续做退出触发与空闲快照"
+                                       Style="{StaticResource Md3.BodySmall}" Margin="0,2,0,0" />
+                            <TextBlock Text="便携模式下不写注册表，此项不可用"
+                                       Style="{StaticResource Md3.Hint}"
+                                       Visibility="{Binding AutoStartAvailable, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}" />
+                        </StackPanel>
+                        <CheckBox Grid.Column="1" Style="{StaticResource Md3.Switch}" VerticalAlignment="Center"
+                                  IsChecked="{Binding AutoStartEnabled}"
+                                  IsEnabled="{Binding AutoStartAvailable}" />
+                    </Grid>
+
+                    <Border Style="{StaticResource Md3.Divider}" Margin="0,16,0,14" />
+
+                    <TextBlock Text="触发时机（秒 / 分钟）" Style="{StaticResource Md3.LabelMedium}" Margin="0,0,0,8" />
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Label" />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Label2" />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Label3" />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="退出延迟" Style="{StaticResource Md3.BodySmall}"
+                                   VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <TextBox Grid.Column="1" Text="{Binding ExitDelayText, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center" Margin="0,0,18,0" />
+                        <TextBlock Grid.Column="2" Text="去抖" Style="{StaticResource Md3.BodySmall}"
+                                   VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <TextBox Grid.Column="3" Text="{Binding DebounceText, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center" Margin="0,0,18,0" />
+                        <TextBlock Grid.Column="4" Text="空闲间隔" Style="{StaticResource Md3.BodySmall}"
+                                   VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <TextBox Grid.Column="5" Text="{Binding IdleIntervalText, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center" Margin="0,0,18,0" />
+                        <Button Grid.Column="6" Content="保存" Style="{StaticResource Md3.TonalButton}"
+                                Command="{Binding SaveAutomationCommand}" HorizontalAlignment="Left" />
+                    </Grid>
+                    <TextBlock Text="范围：退出延迟 1–30 秒、去抖 1–60 秒、空闲间隔 5–60 分钟。保存后重启应用生效。"
+                               Style="{StaticResource Md3.Hint}" Margin="0,0,0,14" />
+
+                    <Border Style="{StaticResource Md3.Divider}" Margin="0,0,0,14" />
+
+                    <TextBlock Text="全局排除（每行一个通配符，对所有游戏生效）"
+                               Style="{StaticResource Md3.LabelMedium}" Margin="0,0,0,8" />
+                    <TextBox Text="{Binding GlobalExcludesText, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True" TextWrapping="NoWrap" VerticalContentAlignment="Top"
+                             MinHeight="64" MaxHeight="140" VerticalScrollBarVisibility="Auto"
+                             FontFamily="{StaticResource Md3.MonoFont}" FontSize="12"
+                             />
+                    <TextBlock Text="例：*.log、cache/*、*.bak。以 # 开头的行是注释。与单个游戏的排除规则叠加。"
+                               Style="{StaticResource Md3.Hint}" Margin="0,4,0,10" />
+                    <Button Style="{StaticResource Md3.TonalButton}"
+                            Command="{Binding SaveGlobalExcludesCommand}" HorizontalAlignment="Left">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE74E;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                            <TextBlock Text="保存排除规则" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- 数据 -->
+            <Border Style="{StaticResource Md3.OutlinedCard}" Margin="0,0,0,16">
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,12">
+                        <Border DockPanel.Dock="Right" Style="{StaticResource Md3.Chip}" Padding="8,2">
+                            <TextBlock Text="{Binding PortableText}" FontSize="11" />
+                        </Border>
+                        <TextBlock Text="数据与设备" Style="{StaticResource Md3.TitleMedium}" />
+                    </DockPanel>
+
+                    <TextBlock Text="数据目录" Style="{StaticResource Md3.FieldLabel}" />
+                    <TextBox Text="{Binding DataRootText, Mode=OneWay}" IsReadOnly="True" />
+
+                    <TextBlock Text="自定义存档规则文件（可选）" Style="{StaticResource Md3.FieldLabel}" Margin="0,12,0,6" />
+                    <TextBox Text="{Binding RulesPathText, Mode=OneWay}" IsReadOnly="True" FontSize="12" Height="44" />
+
+                    <Grid Margin="0,14,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Style="{StaticResource Md3.OutlinedButton}"
+                                Command="{Binding OpenDataFolderCommand}" Margin="0,0,12,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE838;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                            <TextBlock Text="打开数据目录" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                        <TextBlock Grid.Column="1" Style="{StaticResource Md3.BodySmall}"
+                                   Text="快照与对象以内容寻址存放，删除应用不会删除这些文件。"
+                                   VerticalAlignment="Center" TextWrapping="Wrap" />
+                    </Grid>
+
+                    <Border Style="{StaticResource Md3.Divider}" Margin="0,16,0,14" />
+
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Style="{StaticResource Md3.TextButton}"
+                                Command="{Binding RefreshDevicesCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE72C;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                            <TextBlock Text="刷新设备" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                        <TextBlock Text="我的设备" Style="{StaticResource Md3.LabelLarge}" />
+                    </DockPanel>
+                    <TextBlock Text="{Binding DeviceIdText, StringFormat=本机设备 ID：{0}}"
+                               Style="{StaticResource Md3.BodySmall}" Margin="0,4,0,4" />
+                    <TextBlock Text="{Binding DevicesText}" Style="{StaticResource Md3.BodySmall}"
+                               TextWrapping="Wrap" Foreground="{DynamicResource Md3.OnSurface}" />
+                </StackPanel>
+            </Border>
+
+            <!-- 关于 -->
+            <Border Style="{StaticResource Md3.OutlinedCard}">
+                <StackPanel>
+                    <TextBlock Text="关于" Style="{StaticResource Md3.TitleMedium}" Margin="0,0,0,8" />
+                    <TextBlock Style="{StaticResource Md3.BodySmall}">
+                        <Run Text="GameSaveSync " />
+                        <Run Text="{Binding AppVersionText, Mode=OneWay}" />
+                        <Run Text=" · .NET 8 / WPF / Material Design 3" />
+                    </TextBlock>
+                    <TextBlock Text="本地优先：网络失败不影响本地快照；所有网络操作先入 outbox 再执行。"
+                               Style="{StaticResource Md3.Hint}" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

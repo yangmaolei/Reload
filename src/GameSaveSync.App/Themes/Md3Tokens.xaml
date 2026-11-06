@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Material Design 3 · 设计令牌（浅色）
+  颜色以 MD3 色彩角色命名，控件只引用角色，不引用具体色值。
+  种子色为青绿（utility / 存档工具的冷静感），成功与警告是无障碍扩展角色（MD3 本身没有）。
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ========== 颜色角色 ========== -->
+    <Color x:Key="Md3.PrimaryColor">#00696D</Color>
+    <Color x:Key="Md3.OnPrimaryColor">#FFFFFF</Color>
+    <Color x:Key="Md3.PrimaryContainerColor">#9CF1F5</Color>
+    <Color x:Key="Md3.OnPrimaryContainerColor">#002022</Color>
+
+    <Color x:Key="Md3.SecondaryColor">#4A6364</Color>
+    <Color x:Key="Md3.OnSecondaryColor">#FFFFFF</Color>
+    <Color x:Key="Md3.SecondaryContainerColor">#CCE8E9</Color>
+    <Color x:Key="Md3.OnSecondaryContainerColor">#051F20</Color>
+
+    <Color x:Key="Md3.TertiaryColor">#4B607C</Color>
+    <Color x:Key="Md3.OnTertiaryColor">#FFFFFF</Color>
+    <Color x:Key="Md3.TertiaryContainerColor">#D3E4FF</Color>
+    <Color x:Key="Md3.OnTertiaryContainerColor">#041C35</Color>
+
+    <Color x:Key="Md3.ErrorColor">#BA1A1A</Color>
+    <Color x:Key="Md3.OnErrorColor">#FFFFFF</Color>
+    <Color x:Key="Md3.ErrorContainerColor">#FFDAD6</Color>
+    <Color x:Key="Md3.OnErrorContainerColor">#410002</Color>
+
+    <Color x:Key="Md3.SuccessContainerColor">#B7F0C4</Color>
+    <Color x:Key="Md3.OnSuccessContainerColor">#00210B</Color>
+    <Color x:Key="Md3.WarningContainerColor">#FFDF9E</Color>
+    <Color x:Key="Md3.OnWarningContainerColor">#261A00</Color>
+
+    <Color x:Key="Md3.SurfaceColor">#F5FAF9</Color>
+    <Color x:Key="Md3.OnSurfaceColor">#171D1D</Color>
+    <Color x:Key="Md3.SurfaceVariantColor">#DAE4E4</Color>
+    <Color x:Key="Md3.OnSurfaceVariantColor">#3F4949</Color>
+    <Color x:Key="Md3.SurfaceDimColor">#D5DBDA</Color>
+    <Color x:Key="Md3.SurfaceBrightColor">#F5FAF9</Color>
+    <Color x:Key="Md3.SurfaceContainerLowestColor">#FFFFFF</Color>
+    <Color x:Key="Md3.SurfaceContainerLowColor">#EFF5F4</Color>
+    <Color x:Key="Md3.SurfaceContainerColor">#E9EFEE</Color>
+    <Color x:Key="Md3.SurfaceContainerHighColor">#E3E9E8</Color>
+    <Color x:Key="Md3.SurfaceContainerHighestColor">#DDE4E3</Color>
+
+    <Color x:Key="Md3.OutlineColor">#6F7979</Color>
+    <Color x:Key="Md3.OutlineVariantColor">#BEC8C8</Color>
+    <Color x:Key="Md3.InverseSurfaceColor">#2B3232</Color>
+    <Color x:Key="Md3.InverseOnSurfaceColor">#ECF2F1</Color>
+    <Color x:Key="Md3.InversePrimaryColor">#4CD9E0</Color>
+    <Color x:Key="Md3.ScrimColor">#000000</Color>
+
+    <SolidColorBrush x:Key="Md3.Primary" Color="{StaticResource Md3.PrimaryColor}" />
+    <SolidColorBrush x:Key="Md3.OnPrimary" Color="{StaticResource Md3.OnPrimaryColor}" />
+    <SolidColorBrush x:Key="Md3.PrimaryContainer" Color="{StaticResource Md3.PrimaryContainerColor}" />
+    <SolidColorBrush x:Key="Md3.OnPrimaryContainer" Color="{StaticResource Md3.OnPrimaryContainerColor}" />
+
+    <SolidColorBrush x:Key="Md3.Secondary" Color="{StaticResource Md3.SecondaryColor}" />
+    <SolidColorBrush x:Key="Md3.OnSecondary" Color="{StaticResource Md3.OnSecondaryColor}" />
+    <SolidColorBrush x:Key="Md3.SecondaryContainer" Color="{StaticResource Md3.SecondaryContainerColor}" />
+    <SolidColorBrush x:Key="Md3.OnSecondaryContainer" Color="{StaticResource Md3.OnSecondaryContainerColor}" />
+
+    <SolidColorBrush x:Key="Md3.Tertiary" Color="{StaticResource Md3.TertiaryColor}" />
+    <SolidColorBrush x:Key="Md3.OnTertiary" Color="{StaticResource Md3.OnTertiaryColor}" />
+    <SolidColorBrush x:Key="Md3.TertiaryContainer" Color="{StaticResource Md3.TertiaryContainerColor}" />
+    <SolidColorBrush x:Key="Md3.OnTertiaryContainer" Color="{StaticResource Md3.OnTertiaryContainerColor}" />
+
+    <SolidColorBrush x:Key="Md3.Error" Color="{StaticResource Md3.ErrorColor}" />
+    <SolidColorBrush x:Key="Md3.OnError" Color="{StaticResource Md3.OnErrorColor}" />
+    <SolidColorBrush x:Key="Md3.ErrorContainer" Color="{StaticResource Md3.ErrorContainerColor}" />
+    <SolidColorBrush x:Key="Md3.OnErrorContainer" Color="{StaticResource Md3.OnErrorContainerColor}" />
+
+    <SolidColorBrush x:Key="Md3.SuccessContainer" Color="{StaticResource Md3.SuccessContainerColor}" />
+    <SolidColorBrush x:Key="Md3.OnSuccessContainer" Color="{StaticResource Md3.OnSuccessContainerColor}" />
+    <SolidColorBrush x:Key="Md3.WarningContainer" Color="{StaticResource Md3.WarningContainerColor}" />
+    <SolidColorBrush x:Key="Md3.OnWarningContainer" Color="{StaticResource Md3.OnWarningContainerColor}" />
+
+    <SolidColorBrush x:Key="Md3.Surface" Color="{StaticResource Md3.SurfaceColor}" />
+    <SolidColorBrush x:Key="Md3.OnSurface" Color="{StaticResource Md3.OnSurfaceColor}" />
+    <SolidColorBrush x:Key="Md3.SurfaceVariant" Color="{StaticResource Md3.SurfaceVariantColor}" />
+    <SolidColorBrush x:Key="Md3.OnSurfaceVariant" Color="{StaticResource Md3.OnSurfaceVariantColor}" />
+    <SolidColorBrush x:Key="Md3.SurfaceDim" Color="{StaticResource Md3.SurfaceDimColor}" />
+    <SolidColorBrush x:Key="Md3.SurfaceBright" Color="{StaticResource Md3.SurfaceBrightColor}" />
+    <SolidColorBrush x:Key="Md3.SurfaceContainerLowest" Color="{StaticResource Md3.SurfaceContainerLowestColor}" />
+    <SolidColorBrush x:Key="Md3.SurfaceContainerLow" Color="{StaticResource Md3.SurfaceContainerLowColor}" />
+    <SolidColorBrush x:Key="Md3.SurfaceContainer" Color="{StaticResource Md3.SurfaceContainerColor}" />
+    <SolidColorBrush x:Key="Md3.SurfaceContainerHigh" Color="{StaticResource Md3.SurfaceContainerHighColor}" />
+    <SolidColorBrush x:Key="Md3.SurfaceContainerHighest" Color="{StaticResource Md3.SurfaceContainerHighestColor}" />
+
+    <SolidColorBrush x:Key="Md3.Outline" Color="{StaticResource Md3.OutlineColor}" />
+    <SolidColorBrush x:Key="Md3.OutlineVariant" Color="{StaticResource Md3.OutlineVariantColor}" />
+    <SolidColorBrush x:Key="Md3.InverseSurface" Color="{StaticResource Md3.InverseSurfaceColor}" />
+    <SolidColorBrush x:Key="Md3.InverseOnSurface" Color="{StaticResource Md3.InverseOnSurfaceColor}" />
+    <SolidColorBrush x:Key="Md3.InversePrimary" Color="{StaticResource Md3.InversePrimaryColor}" />
+    <SolidColorBrush x:Key="Md3.Scrim" Color="{StaticResource Md3.ScrimColor}" />
+
+    <!-- 兼容旧代码的别名（部分窗口仍在引用） -->
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Md3.PrimaryColor}" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource Md3.SurfaceContainerLowestColor}" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource Md3.OutlineVariantColor}" />
+    <SolidColorBrush x:Key="MutedBrush" Color="{StaticResource Md3.OnSurfaceVariantColor}" />
+    <SolidColorBrush x:Key="OkBrush" Color="{StaticResource Md3.OnSuccessContainerColor}" />
+    <SolidColorBrush x:Key="WarnBrush" Color="{StaticResource Md3.OnWarningContainerColor}" />
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource Md3.ErrorColor}" />
+
+    <!-- ========== 字体阶梯 ========== -->
+    <FontFamily x:Key="Md3.FontFamily">Segoe UI Variable Text, Microsoft YaHei UI, Segoe UI</FontFamily>
+    <FontFamily x:Key="Md3.IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+    <FontFamily x:Key="Md3.MonoFont">Cascadia Mono, Consolas, Microsoft YaHei UI</FontFamily>
+
+    <Style x:Key="Md3.DisplaySmall" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="36" />
+        <Setter Property="LineHeight" Value="44" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurface}" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
+    </Style>
+
+    <Style x:Key="Md3.HeadlineMedium" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="LineHeight" Value="36" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurface}" />
+    </Style>
+
+    <Style x:Key="Md3.HeadlineSmall" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="LineHeight" Value="32" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurface}" />
+    </Style>
+
+    <Style x:Key="Md3.TitleLarge" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="LineHeight" Value="28" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurface}" />
+    </Style>
+
+    <Style x:Key="Md3.TitleMedium" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="LineHeight" Value="24" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurface}" />
+    </Style>
+
+    <Style x:Key="Md3.TitleSmall" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="LineHeight" Value="20" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurface}" />
+    </Style>
+
+    <Style x:Key="Md3.BodyLarge" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="LineHeight" Value="24" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurface}" />
+    </Style>
+
+    <Style x:Key="Md3.BodyMedium" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="LineHeight" Value="20" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurface}" />
+    </Style>
+
+    <Style x:Key="Md3.BodySmall" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="LineHeight" Value="16" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurfaceVariant}" />
+    </Style>
+
+    <Style x:Key="Md3.LabelLarge" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="LineHeight" Value="20" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurface}" />
+    </Style>
+
+    <Style x:Key="Md3.LabelMedium" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="LineHeight" Value="16" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurfaceVariant}" />
+    </Style>
+
+    <Style x:Key="Md3.LabelSmall" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Md3.FontFamily}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="LineHeight" Value="16" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Md3.OnSurfaceVariant}" />
+    </Style>
+
+    <!-- 旧窗口仍在用的 SectionTitle -->
+    <Style x:Key="SectionTitle" TargetType="TextBlock" BasedOn="{StaticResource Md3.TitleMedium}" />
+
+    <!-- ========== 形状 / 层次 ========== -->
+    <CornerRadius x:Key="Md3.Shape.ExtraSmall">4</CornerRadius>
+    <CornerRadius x:Key="Md3.Shape.Small">8</CornerRadius>
+    <CornerRadius x:Key="Md3.Shape.Medium">12</CornerRadius>
+    <CornerRadius x:Key="Md3.Shape.Large">16</CornerRadius>
+    <CornerRadius x:Key="Md3.Shape.ExtraLarge">28</CornerRadius>
+
+    <DropShadowEffect x:Key="Md3.Elevation1" BlurRadius="10" ShadowDepth="1" Direction="270"
+                      Opacity="0.10" Color="#000000" />
+    <DropShadowEffect x:Key="Md3.Elevation2" BlurRadius="18" ShadowDepth="3" Direction="270"
+                      Opacity="0.14" Color="#000000" />
+
+    <!-- 图标（Segoe MDL2 Assets 码位，Windows 10/11 都带） -->
+    <sys:String x:Key="Md3.Icon.Game">&#xE7FC;</sys:String>
+    <sys:String x:Key="Md3.Icon.Dashboard">&#xE9D9;</sys:String>
+    <sys:String x:Key="Md3.Icon.Settings">&#xE713;</sys:String>
+    <sys:String x:Key="Md3.Icon.Add">&#xE710;</sys:String>
+    <sys:String x:Key="Md3.Icon.Search">&#xE721;</sys:String>
+    <sys:String x:Key="Md3.Icon.Back">&#xE72B;</sys:String>
+    <sys:String x:Key="Md3.Icon.Cloud">&#xE753;</sys:String>
+    <sys:String x:Key="Md3.Icon.Sync">&#xE895;</sys:String>
+    <sys:String x:Key="Md3.Icon.Save">&#xE74E;</sys:String>
+    <sys:String x:Key="Md3.Icon.History">&#xE81C;</sys:String>
+    <sys:String x:Key="Md3.Icon.Folder">&#xE8B7;</sys:String>
+    <sys:String x:Key="Md3.Icon.Warning">&#xE7BA;</sys:String>
+    <sys:String x:Key="Md3.Icon.Info">&#xE946;</sys:String>
+    <sys:String x:Key="Md3.Icon.Close">&#xE8BB;</sys:String>
+    <sys:String x:Key="Md3.Icon.Minimize">&#xE921;</sys:String>
+    <sys:String x:Key="Md3.Icon.Maximize">&#xE922;</sys:String>
+    <sys:String x:Key="Md3.Icon.Restore">&#xE923;</sys:String>
+    <sys:String x:Key="Md3.Icon.Refresh">&#xE72C;</sys:String>
+    <sys:String x:Key="Md3.Icon.Export">&#xEDE1;</sys:String>
+    <sys:String x:Key="Md3.Icon.Delete">&#xE74D;</sys:String>
+    <sys:String x:Key="Md3.Icon.Chevron">&#xE76C;</sys:String>
+
+</ResourceDictionary>

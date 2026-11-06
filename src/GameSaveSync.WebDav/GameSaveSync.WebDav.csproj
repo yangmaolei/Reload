@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>GameSaveSync.WebDav</RootNamespace>
+    <AssemblyName>GameSaveSync.WebDav</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GameSaveSync.Core\GameSaveSync.Core.csproj" />
+  </ItemGroup>
+
+</Project>
