@@ -207,6 +207,49 @@ dotnet test  GameSaveSync.sln      # 期望：320/320 通过
 
 已实测通过（这正是发现 `.gitignore` 误伤 `Diagnostics/`、`Covers/` 两个源码目录的手段）。
 
+### 2.6 上传到 GitHub（已完成）
+
+| 项 | 值 |
+|---|---|
+| 仓库地址 | **https://github.com/yangmaolei/Reload** |
+| 远程名 | `origin` → `https://github.com/yangmaolei/Reload.git` |
+| 推送分支 | `main`（已设置上游跟踪 `origin/main`） |
+| 可见性 | 公开（public） |
+| 默认分支 | `main` |
+| 账号 | `yangmaolei`（显示名 杨毛毛，id 159758912） |
+
+推送的 4 个提交：
+
+```
+e438cca  docs(m6): 记录 .gitignore 误伤源码目录的排查过程与克隆验证方法
+3c8223b  fix(git): 修正 .gitignore 误伤源码目录
+f81f31f  docs(m6): 补充 Xbox 识别与 Git 版本管理交付说明，更新向导副标题文案
+733fb40  feat(xbox): 支持 Xbox / 微软商店游戏识别，并接入 Git 版本管理
+```
+
+**认证方式**：GitHub OAuth 设备码流程（client_id `0120e057bd645470c1ed`，scope `repo gist workflow`），
+令牌已存入 **Windows 凭据管理器**（GCM `store`），后续 `git push` 无需再登录。
+
+**本机网络注意事项**（不影响仓库内容，但换网络后需注意）：
+
+- `github.com` 主站**必须**走系统代理 `http://127.0.0.1:12450`；直连 20.205.243.166:443 会超时。
+  已在仓库级配置 `http.proxy` / `https.proxy`（写入 `.git/config`，不进版本库）。
+- 沙箱代理 `127.0.0.1:63910` 对 `api.github.com` 正常，但对 `github.com/login/*` 的 OAuth 端点失败
+  （GCM 报"发送请求时出错"），所以设备码与令牌交换都显式指定了 `12450`。
+- 环境里 `GIT_TERMINAL_PROMPT=0` 会让 `git credential fill` 直接报
+  "Cannot prompt because terminal prompts have been disabled"，无法交互式输入用户名时需改用设备码流程。
+
+### 2.7 后续使用
+
+```bash
+cd C:\Users\yang\WorkBuddy\2026-10-30-20-41-20\GameSaveSync
+git push                      # 凭据已在 Windows 凭据管理器，直接推
+git pull                      # 拉取
+git clone https://github.com/yangmaolei/Reload.git   # 克隆
+```
+
+若代理端口变化，更新：`git config http.proxy http://127.0.0.1:<新端口>`。
+
 ---
 
 ## 三、已知限制

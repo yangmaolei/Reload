@@ -4,6 +4,8 @@ Windows 游戏存档管理与云备份工具（原名 GameSaveSync，v0.4 起更
 已交付 **M1（单机闭环）**、**M2（自动化与可靠性）**、**M3（多设备）**、**M4（识别率与体验）**、
 **M4.5（界面打磨与个性化）**：手动备份/恢复 + 自动备份 + 跨机同步 + 平台自动发现 + Material Design 3 界面。
 
+> 代码仓库：<https://github.com/yangmaolei/Reload>　·　分支 `main`　·　目标框架 .NET 8 / WPF / Windows x64
+
 ## M4.6 能做什么
 
 - **联网查询存档路径**：手动添加游戏时点「联网查询存档路径」，按名字去 PCGamingWiki 查已知存档位置，
