@@ -457,8 +457,19 @@ public partial class App : Application
         services.AddSingleton<GameDiscoveryService>();
         services.AddSingleton<ProbeService>();
         services.AddSingleton<ICoverDownloader, HttpCoverDownloader>();
-        services.AddSingleton<GameSaveSync.Core.Online.IOnlineSavePathProvider, GameSaveSync.Core.Online.PcGamingWikiProvider>();
+        // 存档路径数据源：按顺序回退。
+        // 清单型数据源（GitHub Raw）放前面 —— PCGamingWiki 的匿名请求经常被
+        // Cloudflare 拦成 403，而清单是同一批数据的公开编译产物，不走挑战页。
+        // 系统代理：显式指定，避免环境变量里的代理把公开数据源也绕进防护页
+        services.AddSingleton<GameSaveSync.Core.Abstractions.IWebProxyProvider,
+            GameSaveSync.Infrastructure.WindowsSystemProxyProvider>();
+        services.AddSingleton<GameSaveSync.Core.Online.LudusaviManifestProvider>();
+        services.AddSingleton<GameSaveSync.Core.Online.IOnlineSavePathProvider>(
+            sp => sp.GetRequiredService<GameSaveSync.Core.Online.LudusaviManifestProvider>());
+        services.AddSingleton<GameSaveSync.Core.Online.IOnlineSavePathProvider,
+            GameSaveSync.Core.Online.PcGamingWikiProvider>();
         services.AddSingleton<CoverService>();
+        services.AddSingleton<GameSaveSync.Core.Online.SavePathRefreshService>();
         services.AddSingleton(sp => new DiagnosticsService(
             sp.GetRequiredService<SqliteDatabase>(),
             sp.GetRequiredService<IObjectRepository>(),

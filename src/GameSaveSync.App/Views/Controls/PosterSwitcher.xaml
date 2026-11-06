@@ -1,0 +1,164 @@
+<UserControl x:Class="GameSaveSync.App.Views.Controls.PosterSwitcher"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:GameSaveSync.App.ViewModels"
+             xmlns:conv="clr-namespace:GameSaveSync.App.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:GameListItemViewModel}">
+
+    <UserControl.Resources>
+        <conv:PosterIndicatorConverter x:Key="PosterIndicator" />
+
+        <!-- 切换按钮：小圆角方形，浮在图片左右两侧 -->
+        <Style x:Key="SwitchButton" TargetType="Button">
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" CornerRadius="8"
+                                Background="{DynamicResource Md3.SurfaceContainerHighest}"
+                                BorderBrush="{DynamicResource Md3.OutlineVariant}"
+                                BorderThickness="1">
+                            <TextBlock x:Name="Glyph" Text="{TemplateBinding Content}"
+                                       FontFamily="{StaticResource Md3.IconFont}" FontSize="14"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource Md3.OnSurface}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{DynamicResource Md3.PrimaryContainer}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bg" Property="Opacity" Value="0.75" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bg" Property="Opacity" Value="0.35" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 分页指示点：选中态用主色 -->
+        <Style x:Key="IndicatorDot" TargetType="Border">
+            <Setter Property="Width" Value="6" />
+            <Setter Property="Height" Value="6" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="Margin" Value="3,0,0,0" />
+            <Setter Property="Background" Value="{DynamicResource Md3.Outline}" />
+            <Style.Triggers>
+                <DataTrigger Value="True">
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter="{StaticResource PosterIndicator}">
+                            <Binding />
+                            <Binding Path="SelectedPosterKind" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property="Background" Value="{DynamicResource Md3.Primary}" />
+                    <Setter Property="Width" Value="16" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- 图片区。
+             【为什么不用 Border + ClipToBounds】
+             WPF 的 ClipToBounds 只按【直角矩形】裁切，会把圆角外的部分硬生生切成一个
+             方角，视觉上就是"海报被生硬地裁了一刀"。圆角必须由 Image 自己的 Clip 提供。
+             所以这里用 Grid 叠层：圆角底板/描边一层，图片一层，图片自带圆角 Clip。 -->
+        <Grid x:Name="PosterFrame" Grid.Row="0">
+
+            <!-- 圆角底板 + 描边：只负责画，不裁剪任何东西 -->
+            <Border x:Name="PosterChrome"
+                    CornerRadius="12"
+                    Background="{DynamicResource Md3.SurfaceContainerLowest}"
+                    BorderBrush="{DynamicResource Md3.OutlineVariant}"
+                    BorderThickness="1" />
+
+            <!-- 首字母色块兜底：只在没有海报时显示。
+                 用 BoolToVisibility+invert（明确返回 Collapsed）而不是 InverseBool：
+                 bool→Visibility 的内建转换映射到 Hidden，Hidden 元素【仍占布局空间】，
+                 会把海报框撑成方形，在方形头图下方露出一大片空白底板。
+                 有海报时也必须隐藏色块，否则图片没填满容器时露出的色块
+                 会被误看成图片的一部分。 -->
+            <Border x:Name="FallbackTile"
+                    CornerRadius="12"
+                    Visibility="{Binding HasCover, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}"
+                    Background="{Binding Name, Converter={StaticResource NameToBrush}}">
+                <Border.Height>
+                    <Binding Path="ActualWidth" ElementName="PosterFrame" />
+                </Border.Height>
+                <TextBlock Text="{Binding Name, Converter={StaticResource Initials}}"
+                           FontSize="26" FontWeight="SemiBold"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{Binding Name, Converter={StaticResource NameToBrush}, ConverterParameter=foreground}" />
+            </Border>
+
+            <!-- 海报：等比缩放（Uniform），高度由 WPF 按原图比例自动算。
+                 【为什么不固定 Height】先定高度再让宽度受容器上限约束，会导致图片被压扁、
+                 上下露出底板色；只让宽度由容器给、高度按比例自动算，才是真正的
+                 "等比缩放、不变形、不留缝、不溢出"。 -->
+            <Image x:Name="PosterImage"
+                   Source="{Binding CoverPath}"
+                   Stretch="Uniform"
+                   HorizontalAlignment="Stretch"
+                   Visibility="{Binding HasCover, Converter={StaticResource BoolToVisibility}}">
+                <Image.Clip>
+                    <MultiBinding Converter="{StaticResource RoundedClip}">
+                        <Binding Path="ActualWidth" ElementName="PosterImage" />
+                        <Binding Path="ActualHeight" ElementName="PosterImage" />
+                        <Binding Source="11" />
+                    </MultiBinding>
+                </Image.Clip>
+            </Image>
+
+            <!-- 左右切换按钮 -->
+            <Button x:Name="PrevButton"
+                    Style="{StaticResource SwitchButton}"
+                    HorizontalAlignment="Left" VerticalAlignment="Center"
+                    Margin="6,0,0,0"
+                    Content="&#xE72B;"
+                    ToolTip="上一张海报"
+                    Visibility="{Binding HasMultiplePosters, Converter={StaticResource BoolToVisibility}}"
+                    Command="{Binding SwitchPreviousPosterCommand}" />
+            <Button x:Name="NextButton"
+                    Style="{StaticResource SwitchButton}"
+                    HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Margin="0,0,6,0"
+                    Content="&#xE72A;"
+                    ToolTip="下一张海报"
+                    Visibility="{Binding HasMultiplePosters, Converter={StaticResource BoolToVisibility}}"
+                    Command="{Binding SwitchNextPosterCommand}" />
+        </Grid>
+
+        <!-- 分页指示器：点数 = 可用海报数 -->
+        <ItemsControl x:Name="IndicatorRow"
+                      Grid.Row="1"
+                      Margin="0,8,0,0"
+                      HorizontalAlignment="Center"
+                      Visibility="{Binding HasMultiplePosters, Converter={StaticResource BoolToVisibility}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource IndicatorDot}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

@@ -87,7 +87,7 @@ public class MOnlineTests
                 ? """{"query":{"search":[{"title":"Cyberpunk 2077"}]}}"""
                 : """{"parse":{"wikitext":{"*":"{{Game data/saves|Windows|{{p|userprofile\\Saved Games\\Foo}}}}"}}}""");
 
-        using var provider = new PcGamingWikiProvider(new HttpClient(handler) { BaseAddress = new Uri("https://test/") });
+        using var provider = new PcGamingWikiProvider(client: new HttpClient(handler) { BaseAddress = new Uri("https://test/") });
 
         var result = await provider.QueryAsync("Cyberpunk 2077", CancellationToken.None);
 
@@ -101,7 +101,7 @@ public class MOnlineTests
     {
         var handler = new FakeHandler(_ => throw new HttpRequestException("boom"));
 
-        using var provider = new PcGamingWikiProvider(new HttpClient(handler));
+        using var provider = new PcGamingWikiProvider(client: new HttpClient(handler));
 
         var result = await provider.QueryAsync("Foo", CancellationToken.None);
 
@@ -113,7 +113,7 @@ public class MOnlineTests
     {
         var handler = new FakeHandler(_ => "<html>Cloudflare blocked</html>");
 
-        using var provider = new PcGamingWikiProvider(new HttpClient(handler));
+        using var provider = new PcGamingWikiProvider(client: new HttpClient(handler));
 
         var result = await provider.QueryAsync("Foo", CancellationToken.None);
 
