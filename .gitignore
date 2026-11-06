@@ -1,6 +1,10 @@
 # ============================================================
 # Reload（游戏存档同步工具）Git 忽略规则
 # 目标：只跟踪"源码 + 文档"，构建产物、依赖、本地数据一律不入库。
+#
+# 注意：Windows 上 git 默认 core.ignorecase=true，目录名匹配不区分大小写，
+#       所以凡是"运行期数据目录"都必须用 / 锚定到仓库根，
+#       否则 diagnostics/ 会把 src/GameSaveSync.Core/Diagnostics/ 源码目录一起吃掉。
 # ============================================================
 
 # ── .NET 构建产物 ────────────────────────────────────────
@@ -44,8 +48,11 @@ coverage*.info
 
 # ── 运行期数据（应用自己生成的，不该进版本库）────────────
 #  便携模式：exe 同级的 data 目录
-data/
-/src/**/data/
+/data/
+/covers/
+/logs/
+/diagnostics/
+/screenshots/
 #  数据库 / WAL / 快照库
 *.db
 *.db-wal
@@ -53,9 +60,6 @@ data/
 *.sqlite
 *.sqlite3
 #  封面缓存、日志、诊断包
-covers/
-logs/
-diagnostics/
 *.log
 !docs/*.log
 *.zip
@@ -99,5 +103,8 @@ $RECYCLE.BIN/
 *.gif
 *.mp4
 *.webm
-screenshots/
-!src/GameSaveSync.App/Assets/**
+#  源码里随程序分发的资源目录要保留
+!/src/**/Assets/**
+!/src/**/Resources/**
+!/docs/**/*.png
+!/docs/**/*.jpg
