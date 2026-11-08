@@ -36,6 +36,9 @@ public interface IFileSystem
 
     void DeleteFile(string path);
 
+    /// <summary>删除目录；recursive=true 时连同子目录一起删。</summary>
+    void DeleteDirectory(string path, bool recursive);
+
     /// <summary>overwrite=true 时走 MoveFileEx(MOVEFILE_REPLACE_EXISTING) 语义的原子替换。</summary>
     void MoveFile(string sourcePath, string destinationPath, bool overwrite);
 

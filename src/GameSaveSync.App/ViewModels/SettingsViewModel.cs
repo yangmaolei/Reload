@@ -12,6 +12,9 @@ using GameSaveSync.WebDav;
 
 namespace GameSaveSync.App.ViewModels;
 
+/// <summary>自启动方式的一个选项（方式 + 显示名）。</summary>
+public sealed record AutoStartOption(AutoStartMethod Method, string DisplayName);
+
 public sealed partial class SettingsViewModel : ObservableObject
 {
     private readonly WebDavSettingsService _webDav;
@@ -83,6 +86,32 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     [ObservableProperty]
     private bool autoStartAvailable;
+
+    /// <summary>自启动检测结果的人类可读说明（是否真实生效、为什么）。</summary>
+    [ObservableProperty]
+    private string autoStartStatusText = string.Empty;
+
+    /// <summary>自启动方式（0=关闭，1=注册表，2=启动文件夹）。</summary>
+    [ObservableProperty]
+    private int autoStartMethodIndex;
+
+    /// <summary>自启动方式的可选项，供设置页下拉绑定。</summary>
+    public IReadOnlyList<AutoStartOption> AutoStartMethods { get; } = new[]
+    {
+        new AutoStartOption(AutoStartMethod.None, "关闭"),
+        new AutoStartOption(AutoStartMethod.Registry, "注册表启动项（HKCU\\Run）"),
+        new AutoStartOption(AutoStartMethod.StartupFolder, "启动文件夹快捷方式"),
+    };
+
+    partial void OnAutoStartMethodIndexChanged(int value)
+    {
+        if (_loading || _paths.IsPortable)
+        {
+            return;
+        }
+
+        ApplyAutoStart((AutoStartMethod)Math.Clamp(value, 0, 2));
+    }
 
     [ObservableProperty]
     private string appVersionText = string.Empty;
@@ -162,7 +191,14 @@ public sealed partial class SettingsViewModel : ObservableObject
 
         _loading = true;
         AutoStartAvailable = !_paths.IsPortable;
-        AutoStartEnabled = !_paths.IsPortable && _autoStart.IsEnabled;
+
+        // 自启动：读取真实状态（不只是"有没有键"，还要看路径是否还有效）
+        var autoStartStatus = _paths.IsPortable ? AutoStartStatus.Disabled : _autoStart.GetStatus();
+        AutoStartEnabled = autoStartStatus.IsConfigured;
+        AutoStartMethodIndex = (int)autoStartStatus.Method;
+        AutoStartStatusText = _paths.IsPortable
+            ? "便携模式下不写注册表，自启动不可用"
+            : autoStartStatus.Detail;
         _loading = false;
 
         // 外观与高级参数（读不到用默认）
@@ -188,10 +224,61 @@ public sealed partial class SettingsViewModel : ObservableObject
             return;
         }
 
-        var ok = _autoStart.TrySet(value);
-        StatusText = ok
-            ? (value ? "已设置开机自启" : "已取消开机自启")
-            : "写入注册表失败（可能被安全软件拦截）";
+        // 旧的开关式入口（保留兼容）：开 = 用当前方式，关 = 关闭
+        var method = value
+            ? (AutoStartMethod)Math.Clamp(AutoStartMethodIndex, 1, 2)
+            : AutoStartMethod.None;
+
+        ApplyAutoStart(method);
+    }
+
+    /// <summary>
+    /// 应用自启动设置。写入后【重新检测】并把真实状态反馈给用户 ——
+    /// 只报告"写入成功"是不够的，登记项可能指向了别的副本。
+    /// </summary>
+    private void ApplyAutoStart(AutoStartMethod method)
+    {
+        if (_paths.IsPortable)
+        {
+            AutoStartStatusText = "便携模式下不写注册表，自启动不可用";
+            return;
+        }
+
+        var ok = _autoStart.TrySet(method);
+        if (!ok)
+        {
+            AutoStartStatusText = "写入失败（可能被安全软件或组策略拦截）";
+            StatusText = AutoStartStatusText;
+            _logger.Warn($"设置开机自启失败：{method}");
+            return;
+        }
+
+        var status = _autoStart.GetStatus();
+        AutoStartEnabled = status.IsConfigured;
+        AutoStartStatusText = status.Detail;
+        StatusText = method == AutoStartMethod.None
+            ? "已关闭开机自启"
+            : status.IsEffective
+                ? "开机自启已生效"
+                : $"已登记但未生效：{status.Detail}";
+
+        _logger.Info($"开机自启：方式={method}，状态={status.Detail}");
+    }
+
+    /// <summary>重新检测自启动状态（用户在设置页手动刷新）。</summary>
+    [RelayCommand]
+    private void DetectAutoStart()
+    {
+        if (_paths.IsPortable)
+        {
+            AutoStartStatusText = "便携模式下不写注册表，自启动不可用";
+            return;
+        }
+
+        var status = _autoStart.GetStatus();
+        AutoStartEnabled = status.IsConfigured;
+        AutoStartStatusText = status.Detail;
+        StatusText = status.Detail;
     }
 
     [RelayCommand]

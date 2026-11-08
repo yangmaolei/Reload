@@ -9,6 +9,7 @@ using GameSaveSync.Core.Probe;
 using GameSaveSync.Core.Configuration;
 using GameSaveSync.Core.Detection;
 using GameSaveSync.Core.Diagnostics;
+using GameSaveSync.Core.Export;
 using GameSaveSync.Core.Hashing;
 using GameSaveSync.Core.Paths;
 using GameSaveSync.Core.Remote;
@@ -442,6 +443,8 @@ public partial class App : Application
         services.AddSingleton<IRemoteIndexService, RemoteIndexService>();
         services.AddSingleton<IConflictService, ConflictService>();
         services.AddSingleton<ISnapshotExporter, SnapshotExporter>();
+        services.AddSingleton<IBatchSaveExporter, BatchSaveExporter>();
+        services.AddSingleton<BatchOperationPlanner>();
         services.AddSingleton<RemoteIndexPoller>();
 
         services.AddSingleton<IRemoteOperationExecutor, RemoteOperationExecutor>();

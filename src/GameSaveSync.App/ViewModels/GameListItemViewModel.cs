@@ -47,6 +47,14 @@ public interface IDialogService
 
     string? PickSaveFile(string suggestedName);
 
+    /// <summary>选一个目录（批量导出存档的落盘位置）。取消返回 null。</summary>
+    string? PickFolder(string suggestedName, string description);
+
+    /// <summary>
+    /// 展示批量操作的结果明细（成功/失败逐条列出）。
+    /// </summary>
+    void ShowBatchResult(string title, IReadOnlyList<string> lines);
+
     string? PromptNote(string title, string initial = "");
 
     void ShowInfo(string message, string title = "Reload");
@@ -129,6 +137,21 @@ public sealed partial class GameListItemViewModel : ObservableObject
 
     [ObservableProperty]
     private string metaText = string.Empty;
+
+    /// <summary>
+    /// 是否被勾选（批量操作的选择状态）。
+    /// <para>
+    /// 与"单选"（<see cref="MainViewModel.SelectedGame"/>，决定右侧详情页显示谁）
+    /// 是两套独立状态：勾选只影响批量备份/导出，点击卡片进详情不受影响。
+    /// </para>
+    /// </summary>
+    [ObservableProperty]
+    private bool isChecked;
+
+    /// <summary>勾选状态变化时触发，供列表页更新"已选 N 个"计数。</summary>
+    public event Action<GameListItemViewModel>? CheckedChanged;
+
+    partial void OnIsCheckedChanged(bool value) => CheckedChanged?.Invoke(this);
 
     public bool HasCover => !string.IsNullOrWhiteSpace(CoverPath);
 

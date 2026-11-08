@@ -44,11 +44,11 @@
             </Setter>
         </Style>
 
-        <!-- 卡片外壳按钮：整卡可点，悬停只加极淡的色层 -->
+        <!-- 卡片外壳按钮：整卡可点，悬停只加极淡的色层。
+             Margin 交给外层 Grid 控制（复选框要和卡片一起排版），这里不再自带。 -->
         <Style x:Key="CardButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="Margin" Value="8" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -105,6 +105,8 @@
         <Grid Visibility="{Binding IsWallVisible, Converter={StaticResource BoolToVisibility}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -140,7 +142,64 @@
                 </StackPanel>
             </Grid>
 
-            <ScrollViewer Grid.Row="1" Style="{StaticResource Md3.ScrollViewer}" Margin="20,0,20,0">
+            <!-- 批量操作条：勾选游戏后出现，承载"全选/取消全选、已选数量、清空选择、备份、导出" -->
+            <Border Grid.Row="1" Margin="28,0,28,10" CornerRadius="12" Padding="14,10"
+                    Background="{DynamicResource Md3.SurfaceContainerLow}"
+                    Visibility="{Binding HasCheckedGames, Converter={StaticResource BoolToVisibility}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding CheckedSummary}" Style="{StaticResource Md3.LabelLarge}"
+                                   VerticalAlignment="Center" />
+                        <Button Style="{StaticResource Md3.TextButton}" FontSize="12" Margin="10,0,0,0"
+                                Command="{Binding ToggleSelectAllCommand}"
+                                ToolTip="选中 / 取消选中当前列表中的全部游戏">
+                            <TextBlock Text="全选 / 取消全选" />
+                        </Button>
+                        <Button Style="{StaticResource Md3.TextButton}" FontSize="12"
+                                Command="{Binding ClearSelectionCommand}">
+                            <TextBlock Text="清空选择" />
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Style="{StaticResource Md3.TonalButton}" Margin="0,0,8,0"
+                                Command="{Binding BackupCheckedGamesCommand}"
+                                IsEnabled="{Binding IsBatchRunning, Converter={StaticResource InverseBool}}"
+                                ToolTip="把所选游戏的存档原样复制到一个统一目录，每个游戏一个子目录">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE74E;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="一键备份所选" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource Md3.FilledButton}"
+                                Command="{Binding ExportCheckedGamesCommand}"
+                                IsEnabled="{Binding IsBatchRunning, Converter={StaticResource InverseBool}}"
+                                ToolTip="把所选游戏的存档打包成一个 zip，保持原文件与目录结构">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xEDE1;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource Md3.OnPrimary}" />
+                                <TextBlock Text="一键导出所选" Foreground="{DynamicResource Md3.OnPrimary}" Margin="8,0,0,0" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 批量操作的状态反馈（成功/失败摘要），不随全局状态栏消失 -->
+            <TextBlock Grid.Row="2" Margin="30,0,28,6"
+                       Style="{StaticResource Md3.LabelSmall}"
+                       Foreground="{DynamicResource Md3.Outline}"
+                       TextTrimming="CharacterEllipsis"
+                       Text="{Binding BatchResultText}"
+                       Visibility="{Binding BatchResultText, Converter={StaticResource TextToVisibility}}" />
+
+            <ScrollViewer Grid.Row="3" Style="{StaticResource Md3.ScrollViewer}" Margin="20,0,20,0">
                 <Grid>
                     <ItemsControl ItemsSource="{Binding VisibleGames}" Margin="0,8,0,72">
                         <ItemsControl.ItemsPanel>
@@ -150,56 +209,100 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:GameListItemViewModel}">
-                                <!-- 整卡可点进入详情；海报区内的左右箭头是嵌套按钮，
-                                     WPF 中内层按钮优先消费点击，不会冒泡到外层卡片。 -->
-                                <Button Style="{StaticResource CardButton}"
-                                        Command="{Binding DataContext.SelectGameCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                        CommandParameter="{Binding}"
-                                        AutomationProperties.Name="{Binding Name}">
-                                    <Border Style="{StaticResource Md3.ElevatedCard}" Width="212" Padding="0">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-
-                                            <!-- 海报区：竖屏长图 / 方形头图 两种形态可切换，
-                                                 高度按形态宽高比自适应，等比缩放不变形。 -->
-                                            <ctrl:PosterSwitcher Grid.Row="0" DataContext="{Binding}"
-                                                                 Margin="10,10,10,0" />
-
-                                            <Grid Grid.Row="1" Margin="12,10,12,12">
+                                <!-- 卡片外壳：Grid 套 Button 再套 Border。
+                                     复选框【必须】放在 Button 外面 —— 放在里面点击勾选框
+                                     会同时触发卡片的 Command（进详情页），两个操作会打架。 -->
+                                <Grid Width="228" Margin="8">
+                                    <Button Style="{StaticResource CardButton}"
+                                            HorizontalAlignment="Left" VerticalAlignment="Top"
+                                            Command="{Binding DataContext.SelectGameCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            AutomationProperties.Name="{Binding Name}">
+                                        <Border Style="{StaticResource Md3.ElevatedCard}" Width="212" Padding="0">
+                                            <Grid>
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="Auto" />
                                                     <RowDefinition Height="Auto" />
                                                 </Grid.RowDefinitions>
 
-                                                <DockPanel Grid.Row="0">
-                                                    <Border DockPanel.Dock="Right" Style="{StaticResource Md3.Badge}"
-                                                            Background="{Binding State, Converter={StaticResource StateToBrush}}">
-                                                        <TextBlock Text="{Binding StateText}" FontSize="11"
-                                                                   Foreground="{Binding State, Converter={StaticResource StateToBrush}, ConverterParameter=foreground}" />
-                                                    </Border>
-                                                    <TextBlock Text="{Binding Name}" Style="{StaticResource Md3.TitleMedium}"
+                                                <!-- 海报区：竖屏长图 / 方形头图 两种形态可切换，
+                                                     高度按形态宽高比自适应，等比缩放不变形。 -->
+                                                <ctrl:PosterSwitcher Grid.Row="0" DataContext="{Binding}"
+                                                                     Margin="10,10,10,0" />
+
+                                                <Grid Grid.Row="1" Margin="12,10,12,12">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+
+                                                    <DockPanel Grid.Row="0">
+                                                        <Border DockPanel.Dock="Right" Style="{StaticResource Md3.Badge}"
+                                                                Background="{Binding State, Converter={StaticResource StateToBrush}}">
+                                                            <TextBlock Text="{Binding StateText}" FontSize="11"
+                                                                       Foreground="{Binding State, Converter={StaticResource StateToBrush}, ConverterParameter=foreground}" />
+                                                        </Border>
+                                                        <TextBlock Text="{Binding Name}" Style="{StaticResource Md3.TitleMedium}"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                    </DockPanel>
+
+                                                    <TextBlock Grid.Row="1" Margin="0,2,0,0" Style="{StaticResource Md3.BodySmall}"
+                                                               TextTrimming="CharacterEllipsis">
+                                                        <Run Text="{Binding PlatformText, Mode=OneWay}" />
+                                                        <Run Text=" · " />
+                                                        <Run Text="{Binding MetaText, Mode=OneWay}" />
+                                                    </TextBlock>
+
+                                                    <TextBlock Grid.Row="2" Text="{Binding RootSummary}" Margin="0,6,0,0"
+                                                               Style="{StaticResource Md3.LabelSmall}"
+                                                               Foreground="{DynamicResource Md3.Outline}"
                                                                TextTrimming="CharacterEllipsis" />
-                                                </DockPanel>
-
-                                                <TextBlock Grid.Row="1" Margin="0,2,0,0" Style="{StaticResource Md3.BodySmall}"
-                                                           TextTrimming="CharacterEllipsis">
-                                                    <Run Text="{Binding PlatformText, Mode=OneWay}" />
-                                                    <Run Text=" · " />
-                                                    <Run Text="{Binding MetaText, Mode=OneWay}" />
-                                                </TextBlock>
-
-                                                <TextBlock Grid.Row="2" Text="{Binding RootSummary}" Margin="0,6,0,0"
-                                                           Style="{StaticResource Md3.LabelSmall}"
-                                                           Foreground="{DynamicResource Md3.Outline}"
-                                                           TextTrimming="CharacterEllipsis" />
+                                                </Grid>
                                             </Grid>
-                                        </Grid>
-                                    </Border>
-                                </Button>
+                                        </Border>
+                                    </Button>
+
+                                    <!-- 勾选框：浮在卡片左上角，垫一层半透明底板保证在海报上也可读 -->
+                                    <CheckBox HorizontalAlignment="Left" VerticalAlignment="Top"
+                                              Margin="-2,-2,0,0"
+                                              IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                              AutomationProperties.Name="{Binding Name, StringFormat=选择 {0}}"
+                                              ToolTip="勾选后可批量备份或导出">
+                                        <CheckBox.Template>
+                                            <ControlTemplate TargetType="CheckBox">
+                                                <Grid>
+                                                    <Border x:Name="Halo" Width="30" Height="30" CornerRadius="15"
+                                                            Background="{DynamicResource Md3.Surface}" Opacity="0.9" />
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border x:Name="Box" Width="18" Height="18" CornerRadius="3"
+                                                                BorderBrush="{DynamicResource Md3.OnSurfaceVariant}" BorderThickness="2"
+                                                                Background="Transparent" VerticalAlignment="Center">
+                                                            <Path x:Name="Check" Data="M 2 8 L 6 12 L 14 3"
+                                                                  Stroke="{DynamicResource Md3.OnPrimary}" StrokeThickness="2.2"
+                                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                                                  Visibility="Collapsed" />
+                                                        </Border>
+                                                        <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter TargetName="Box" Property="Background" Value="{DynamicResource Md3.Primary}" />
+                                                        <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Md3.Primary}" />
+                                                        <Setter TargetName="Check" Property="Visibility" Value="Visible" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Md3.OnSurface}" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="Opacity" Value="0.38" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </CheckBox.Template>
+                                    </CheckBox>
+                                </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

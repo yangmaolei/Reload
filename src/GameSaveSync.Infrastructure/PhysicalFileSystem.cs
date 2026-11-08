@@ -87,6 +87,9 @@ public sealed class PhysicalFileSystem : IFileSystem
 
     public void DeleteFile(string path) => File.Delete(LongPath.Ensure(path));
 
+    public void DeleteDirectory(string path, bool recursive) =>
+        Directory.Delete(LongPath.Ensure(path), recursive);
+
     public void MoveFile(string sourcePath, string destinationPath, bool overwrite)
     {
         // overwrite=true → MoveFileEx(MOVEFILE_REPLACE_EXISTING)，目标已存在时原子替换

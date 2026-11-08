@@ -145,15 +145,23 @@ public sealed class TrayIconService : IDisposable
 
         var next = !_autoStart.IsEnabled;
         var ok = _autoStart.TrySet(next);
-        _autoStartItem.Checked = ok && next;
+
+        // 写入后重新检测：登记成功不等于真的能开机启动
+        var status = _autoStart.GetStatus();
+        _autoStartItem.Checked = status.IsConfigured;
 
         _logger.Info(ok
-            ? $"托盘：开机自启已{(next ? "开启" : "关闭")}"
+            ? $"托盘：开机自启已{(next ? "开启" : "关闭")}（{status.Detail}）"
             : "托盘：开机自启设置失败（可能被组策略限制）");
 
-        if (!ok)
+        if (!ok || (next && !status.IsEffective))
         {
-            ShowBalloon("开机自启", "设置失败，可能被组策略或安全软件阻止。", ToolTipIcon.Warning);
+            ShowBalloon(
+                "开机自启",
+                ok
+                    ? $"已登记但未生效：{status.Detail}"
+                    : "设置失败，可能被组策略或安全软件阻止。",
+                ToolTipIcon.Warning);
         }
     }
 

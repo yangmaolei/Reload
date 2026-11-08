@@ -177,6 +177,44 @@
                                   IsEnabled="{Binding AutoStartAvailable}" />
                     </Grid>
 
+                    <!-- 自启动方式：至少两种（注册表 / 启动文件夹），可关闭 -->
+                    <StackPanel Margin="0,14,0,0"
+                                IsEnabled="{Binding AutoStartAvailable}">
+                        <TextBlock Text="自启动方式" Style="{StaticResource Md3.FieldLabel}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <RadioButton GroupName="AutoStartMethod" Margin="0,0,20,0"
+                                     Style="{StaticResource Md3.Radio}"
+                                     Content="关闭"
+                                     IsChecked="{Binding AutoStartMethodIndex, Mode=TwoWay, Converter={StaticResource IntToBool}, ConverterParameter=0}" />
+                            <RadioButton GroupName="AutoStartMethod" Margin="0,0,20,0"
+                                     Style="{StaticResource Md3.Radio}"
+                                     Content="注册表启动项"
+                                     IsChecked="{Binding AutoStartMethodIndex, Mode=TwoWay, Converter={StaticResource IntToBool}, ConverterParameter=1}" />
+                            <RadioButton GroupName="AutoStartMethod"
+                                     Style="{StaticResource Md3.Radio}"
+                                     Content="启动文件夹快捷方式"
+                                     IsChecked="{Binding AutoStartMethodIndex, Mode=TwoWay, Converter={StaticResource IntToBool}, ConverterParameter=2}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- 自启动真实状态：登记项是否存在 + 路径是否还有效 -->
+                    <Grid Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Style="{StaticResource Md3.BodySmall}"
+                                   TextWrapping="Wrap" VerticalAlignment="Center"
+                                   Text="{Binding AutoStartStatusText}" />
+                        <Button Grid.Column="1" Style="{StaticResource Md3.TextButton}" FontSize="12"
+                                Command="{Binding DetectAutoStartCommand}" Margin="12,0,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE72C;" FontFamily="{StaticResource Md3.IconFont}" FontSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="重新检测" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
                     <Border Style="{StaticResource Md3.Divider}" Margin="0,16,0,14" />
 
                     <TextBlock Text="触发时机（秒 / 分钟）" Style="{StaticResource Md3.LabelMedium}" Margin="0,0,0,8" />

@@ -6,6 +6,7 @@ using GameSaveSync.Core.Abstractions;
 using GameSaveSync.Core.Configuration;
 using GameSaveSync.Core.Covers;
 using GameSaveSync.Core.Diagnostics;
+using GameSaveSync.Core.Export;
 using GameSaveSync.Core.Models;
 using GameSaveSync.Core.Online;
 using GameSaveSync.Core.Paths;
@@ -45,6 +46,7 @@ public sealed partial class MainViewModel : ObservableObject
     private readonly SavePathRefreshService _refreshPaths;
     private readonly IPathTokenResolver _tokens;
     private readonly IFileSystem _fileSystem;
+    private readonly BatchOperationPlanner _planner;
     private readonly IDialogService _dialogs;
     private readonly IAppLogger _logger;
     private readonly IClock _clock;
@@ -64,6 +66,7 @@ public sealed partial class MainViewModel : ObservableObject
         SavePathRefreshService refreshPaths,
         IPathTokenResolver tokens,
         IFileSystem fileSystem,
+        BatchOperationPlanner planner,
         IDialogService dialogs,
         IAppLogger logger,
         IClock clock,
@@ -85,6 +88,7 @@ public sealed partial class MainViewModel : ObservableObject
         _refreshPaths = refreshPaths ?? throw new ArgumentNullException(nameof(refreshPaths));
         _tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+        _planner = planner ?? throw new ArgumentNullException(nameof(planner));
         _dialogs = dialogs ?? throw new ArgumentNullException(nameof(dialogs));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _clock = clock ?? throw new ArgumentNullException(nameof(clock));
@@ -186,11 +190,44 @@ public sealed partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string refreshSavePathsStatus = string.Empty;
 
+    /// <summary>已勾选的游戏数量（批量操作的选择状态，与单选详情无关）。</summary>
+    [ObservableProperty]
+    private int checkedCount;
+
+    /// <summary>批量导出/备份的结果提示（成功失败明细）。</summary>
+    [ObservableProperty]
+    private string batchResultText = string.Empty;
+
+    /// <summary>批量导出/备份进行中（禁用按钮，防重复触发）。</summary>
+    [ObservableProperty]
+    private bool isBatchRunning;
+
+    /// <summary>当前勾选的游戏（按列表顺序）。</summary>
+    public IReadOnlyList<GameListItemViewModel> CheckedGames => Games
+        .Where(g => g.IsChecked)
+        .ToList();
+
+    public bool HasCheckedGames => CheckedCount > 0;
+
+    public bool IsWallVisible => SelectedGame is null;
+
     public bool HasSelection => SelectedGame is not null;
 
     public bool IsDetailVisible => SelectedGame is not null;
 
-    public bool IsWallVisible => SelectedGame is null;
+    /// <summary>工具栏上的"已选 N 个"文案。</summary>
+    public string CheckedSummary => CheckedCount switch
+    {
+        0 => "未选择",
+        1 => "已选 1 个",
+        _ => $"已选 {CheckedCount} 个",
+    };
+
+    partial void OnCheckedCountChanged(int value)
+    {
+        OnPropertyChanged(nameof(HasCheckedGames));
+        OnPropertyChanged(nameof(CheckedSummary));
+    }
 
     partial void OnSelectedGameChanged(GameListItemViewModel? value)
     {
@@ -251,12 +288,17 @@ public sealed partial class MainViewModel : ObservableObject
     public async Task LoadAsync()
     {
         var selectedId = SelectedGame?.Id;
+
+        // 刷新列表前记住哪些游戏被勾选，重建后恢复（否则每次刷新选择都被清空）
+        var previouslyChecked = Games.Where(g => g.IsChecked).Select(g => g.Id).ToHashSet();
+
         var stored = await _games.ListAsync(CancellationToken.None).ConfigureAwait(true);
 
         // 旧条目要退订，避免重建后事件重复触发
         foreach (var old in Games)
         {
             old.PosterKindChanged -= SavePosterPreference;
+            old.CheckedChanged -= OnItemCheckedChanged;
         }
 
         Games.Clear();
@@ -294,15 +336,76 @@ public sealed partial class MainViewModel : ObservableObject
             // 用户切换海报形态时把偏好写回数据库
             item.PosterKindChanged += SavePosterPreference;
 
+            // 勾选状态变化时刷新"已选 N 个"
+            item.CheckedChanged += OnItemCheckedChanged;
+
+            // 恢复刷新前的勾选（要在订阅之后设置，否则事件不触发、计数不同步）
+            if (previouslyChecked.Contains(game.Id))
+            {
+                item.IsChecked = true;
+            }
+
             Games.Add(item);
             QueueCoverLoad(item);
         }
 
         ApplyFilter();
+        RecountChecked();
         SelectedGame = Games.FirstOrDefault(g => g.Id == selectedId);
         await ReloadSnapshotsAsync().ConfigureAwait(true);
         StatusMessage = Games.Count == 0 ? "还没有游戏，点「扫描游戏」或「手动添加」开始" : $"共 {Games.Count} 个游戏";
         await Diagnostics.LoadAsync().ConfigureAwait(true);
+    }
+
+    /// <summary>某个条目的勾选状态变了 —— 重算"已选 N 个"。</summary>
+    private void OnItemCheckedChanged(GameListItemViewModel item)
+    {
+        RecountChecked();
+
+        // 记日志：多选状态变化是排查"为什么按钮没反应"的第一手线索
+        _logger.Debug($"勾选变化：{item.Name} → {(item.IsChecked ? "选中" : "取消")}，当前 {CheckedCount} 个");
+    }
+
+    /// <summary>重算勾选数量。</summary>
+    private void RecountChecked() => CheckedCount = Games.Count(g => g.IsChecked);
+
+    /// <summary>全选 / 取消全选（对当前可见的列表生效）。</summary>
+    [RelayCommand]
+    private void ToggleSelectAll()
+    {
+        if (VisibleGames.Count == 0)
+        {
+            return;
+        }
+
+        // 只要还有没选中的，就全选；已经全选则清空（等价于一个"全选"开关）
+        var selectAll = VisibleGames.Any(g => !g.IsChecked);
+
+        foreach (var item in VisibleGames)
+        {
+            item.IsChecked = selectAll;
+        }
+
+        RecountChecked();
+        StatusMessage = selectAll
+            ? $"已选中 {CheckedCount} 个游戏"
+            : "已取消全选";
+
+        _logger.Info($"全选/取消全选：当前列表 {VisibleGames.Count} 个，勾选 {CheckedCount} 个");
+    }
+
+    /// <summary>清空选择。</summary>
+    [RelayCommand]
+    private void ClearSelection()
+    {
+        foreach (var item in Games)
+        {
+            item.IsChecked = false;
+        }
+
+        RecountChecked();
+        StatusMessage = "已清空选择";
+        _logger.Info($"清空选择：勾选 {CheckedCount} 个");
     }
 
     partial void OnSearchTextChanged(string value) => ApplyFilter();
@@ -912,6 +1015,164 @@ public sealed partial class MainViewModel : ObservableObject
         {
             IsRefreshingSavePaths = false;
         }
+    }
+
+    /// <summary>
+    /// 一键备份所选游戏存档：把选中游戏的存档目录原样复制到一个统一目录下，
+    /// 每个游戏一个独立子目录（游戏名_游戏ID前8位）。
+    /// </summary>
+    [RelayCommand]
+    private async Task BackupCheckedGamesAsync()
+    {
+        if (IsBatchRunning)
+        {
+            return;
+        }
+
+        var targets = CheckedGames;
+        if (targets.Count == 0)
+        {
+            _dialogs.ShowInfo(BatchOperationPlanner.NothingSelectedMessage);
+            return;
+        }
+
+        // 目录对话框放在 try 里：对话框本身也可能抛异常（COM 不可用、权限不足），
+        // 放在外面的话 RelayCommand 的异常会被静默吞掉，用户点了按钮却毫无反应。
+        string? folder;
+        try
+        {
+            folder = _dialogs.PickFolder(
+                "Reload 存档备份",
+                "选择备份存档的输出目录");
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("打开目录选择对话框失败", ex);
+            _dialogs.ShowError($"无法打开目录选择对话框：{ex.Message}");
+            return;
+        }
+
+        if (folder is null)
+        {
+            return;
+        }
+
+        IsBatchRunning = true;
+        BatchResultText = $"正在备份 {targets.Count} 个游戏的存档…";
+
+        try
+        {
+            var result = await _planner
+                .BackupToDirectoryAsync(
+                    targets.Select(t => t.Id).ToList(),
+                    folder,
+                    overwriteExisting: true,
+                    CancellationToken.None)
+                .ConfigureAwait(true);
+
+            BatchResultText = $"备份完成：{result.Summary}";
+            StatusMessage = $"备份完成：{result.Summary} → {result.OutputPath}";
+            ShowBatchResult("批量备份结果", result);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("批量备份失败", ex);
+            BatchResultText = $"备份失败：{ex.Message}";
+            StatusMessage = BatchResultText;
+            _dialogs.ShowError($"批量备份失败：{ex.Message}");
+        }
+        finally
+        {
+            IsBatchRunning = false;
+        }
+    }
+
+    /// <summary>
+    /// 一键导出所选游戏：把选中游戏的存档打包成一个 zip（保持原文件、原目录结构），
+    /// 便于分发给他人。
+    /// </summary>
+    [RelayCommand]
+    private async Task ExportCheckedGamesAsync()
+    {
+        if (IsBatchRunning)
+        {
+            return;
+        }
+
+        var targets = CheckedGames;
+        if (targets.Count == 0)
+        {
+            _dialogs.ShowInfo(BatchOperationPlanner.NothingSelectedMessage);
+            return;
+        }
+
+        var suggested = targets.Count == 1
+            ? $"{SanitizeFileName(targets[0].Name)}.zip"
+            : $"Reload-存档导出-{targets.Count}个游戏.zip";
+
+        // 同上：保存对话框的异常也必须被接住，否则点了按钮没反应又没提示
+        string? target;
+        try
+        {
+            target = _dialogs.PickSaveFile(suggested);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("打开保存对话框失败", ex);
+            _dialogs.ShowError($"无法打开保存对话框：{ex.Message}");
+            return;
+        }
+
+        if (target is null)
+        {
+            return;
+        }
+
+        IsBatchRunning = true;
+        BatchResultText = $"正在打包 {targets.Count} 个游戏的存档…";
+
+        try
+        {
+            var result = await _planner
+                .ExportToZipAsync(
+                    targets.Select(t => t.Id).ToList(),
+                    target,
+                    CancellationToken.None)
+                .ConfigureAwait(true);
+
+            BatchResultText = $"导出完成：{result.Summary}";
+            StatusMessage = $"导出完成：{result.Summary} → {result.OutputPath}";
+            ShowBatchResult("批量导出结果", result);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("批量导出失败", ex);
+            BatchResultText = $"导出失败：{ex.Message}";
+            StatusMessage = BatchResultText;
+            _dialogs.ShowError($"批量导出失败：{ex.Message}");
+        }
+        finally
+        {
+            IsBatchRunning = false;
+        }
+    }
+
+    /// <summary>把批量结果整理成逐条明细展示给用户。</summary>
+    private void ShowBatchResult(string title, BatchExportResult result)
+    {
+        var lines = result.Items.Select(i => i.Summary).ToList();
+        lines.Insert(0, $"输出位置：{result.OutputPath}");
+        lines.Insert(1, $"合计：{result.Summary}");
+
+        _dialogs.ShowBatchResult(title, lines);
+    }
+
+    /// <summary>把游戏名里的非法文件名字符换成下划线。</summary>
+    private static string SanitizeFileName(string name)
+    {
+        var invalid = Path.GetInvalidFileNameChars();
+        var cleaned = new string(name.Select(c => invalid.Contains(c) ? '_' : c).ToArray()).Trim();
+        return cleaned.Length == 0 ? "Reload-存档导出" : cleaned;
     }
 
     [RelayCommand]

@@ -24,6 +24,7 @@
             <conv:LogLevelToBrushConverter x:Key="LogLevelToBrush" />
             <conv:HexToBrushConverter x:Key="HexToBrush" />
             <conv:RoundedClipConverter x:Key="RoundedClip" />
+            <conv:IntToBoolConverter x:Key="IntToBool" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

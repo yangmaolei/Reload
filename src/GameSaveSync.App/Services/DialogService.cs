@@ -78,13 +78,53 @@ public sealed class DialogService : IDialogService
     {
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
-            Title = "导出快照",
+            Title = "导出存档",
             FileName = suggestedName,
             DefaultExt = ".zip",
             Filter = "Zip 压缩包 (*.zip)|*.zip",
         };
 
         return dialog.ShowDialog(Owner) == true ? dialog.FileName : null;
+    }
+
+    public string? PickFolder(string suggestedName, string description)
+    {
+        var dialog = new Microsoft.Win32.OpenFolderDialog
+        {
+            Title = description,
+            Multiselect = false,
+        };
+
+        // OpenFolderDialog 没有"初始目录"属性，父目录可以近似实现"上次所在位置"
+        try
+        {
+            var parent = Path.GetDirectoryName(suggestedName);
+            if (!string.IsNullOrEmpty(parent) && Directory.Exists(parent))
+            {
+                dialog.InitialDirectory = parent;
+            }
+        }
+        catch
+        {
+            // 初始目录无效不影响使用
+        }
+
+        // 【为什么用无参 ShowDialog()】
+        // OpenFolderDialog 内部走 Win32 的 IFileDialog，WPF 的 ShowDialog(Window)
+        // 重载对它是"能编译但不弹窗"的静默失败（对话框在别的线程等 owner 消息）。
+        // 无参版本直接弹模态框，实测可靠。
+        return dialog.ShowDialog() == true ? dialog.FolderName : null;
+    }
+
+    public void ShowBatchResult(string title, IReadOnlyList<string> lines)
+    {
+        ArgumentNullException.ThrowIfNull(lines);
+
+        var text = lines.Count == 0
+            ? "（没有明细）"
+            : string.Join(Environment.NewLine, lines);
+
+        MessageWindow.Info(Owner, title, text);
     }
 
     public bool ConfirmRestore(RestorePlan plan)
