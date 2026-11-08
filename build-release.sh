@@ -105,16 +105,47 @@ Reload — 游戏存档同步（便携版）v1.2.0
 EOF
 
 python - <<PYEOF
-import zipfile, os
+import os
+import zipfile
 
 def make_zip(src_dir, out):
-    with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as zf:
-        for name in sorted(os.listdir(src_dir)):
-            zf.write(os.path.join(src_dir, name), name)
-    print('zip written:', out, os.path.getsize(out), 'bytes')
+    """
+    打包目录内容成 zip。
 
-make_zip('publish/portable', r'publish/portable/Reload-${VERSION}-win-x64.zip')
-make_zip('publish/setup', r'publish/setup/Reload-Setup-${VERSION}-win-x64.zip')
+    注意：目标 zip 必须写在 src_dir 之外。
+    否则边写 zip 边扫描目录，会把"正在写的那个 zip"也打包进去 ——
+    而且它是残缺的（写一半被读），用户解压会得到一个坏文件。
+    """
+    out_abs = os.path.abspath(out)
+    src_abs = os.path.abspath(src_dir)
+
+    if os.path.commonpath([out_abs, src_abs]) == src_abs:
+        raise RuntimeError(f'输出 zip 不能放在被打包目录内：{out}')
+
+    with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for name in sorted(os.listdir(src_abs)):
+            full = os.path.join(src_abs, name)
+            if os.path.isfile(full):
+                zf.write(full, name)
+
+    # 校验：能打开且 CRC 正确
+    with zipfile.ZipFile(out) as zf:
+        bad = zf.testzip()
+        if bad is not None:
+            raise RuntimeError(f'zip 校验失败，损坏条目：{bad}')
+        count = len(zf.namelist())
+
+    print(f'zip written: {out} {os.path.getsize(out)} bytes, {count} 个条目, CRC 校验 OK')
+
+# 先删掉旧 zip，避免上一次残留
+for stale in ['publish/Reload-${VERSION}-win-x64.zip',
+              'publish/Reload-Setup-${VERSION}-win-x64.zip']:
+    if os.path.exists(stale):
+        os.remove(stale)
+
+# 输出到 publish/ 根目录，不在被打包目录内（否则会把自己打包进去）
+make_zip('publish/portable', r'publish/Reload-${VERSION}-win-x64.zip')
+make_zip('publish/setup', r'publish/Reload-Setup-${VERSION}-win-x64.zip')
 PYEOF
 
 echo "==> 6/6 校验"
@@ -125,9 +156,8 @@ ls -la publish/setup/
 python - <<'PYEOF'
 import hashlib, os
 files = [
-    'publish/portable/Reload-1.2.0-win-x64.zip',
-    'publish/setup/Reload-Setup-1.2.0-win-x64.zip',
-    'publish/setup/Reload-Setup.exe',
+    'publish/Reload-1.2.0-win-x64.zip',
+    'publish/Reload-Setup-1.2.0-win-x64.zip',
 ]
 lines = []
 for p in files:
