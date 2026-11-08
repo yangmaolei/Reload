@@ -23,6 +23,11 @@ artifacts/
 *.nupkg
 *.snupkg
 
+# 安装器打包用的中间目录（由 build-release.sh 生成，内容是构建产物）
+# payload/ 里的 Reload.exe 已在上面被 *.exe 覆盖，这里补 *.config
+/src/GameSaveSync.Setup/payload/
+/src/GameSaveSync.Setup/deps/
+
 # ── Visual Studio / Rider / VS Code ─────────────────────
 .vs/
 .vscode/

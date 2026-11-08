@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -8,9 +8,9 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <Company>Reload</Company>
     <Product>Reload</Product>
-    <Version>1.1.0</Version>
-    <FileVersion>1.1.0</FileVersion>
-    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <Version>1.2.0</Version>
+    <FileVersion>1.2.0</FileVersion>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
     <Copyright>Copyright © 2026 Reload contributors</Copyright>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>

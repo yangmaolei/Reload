@@ -1,0 +1,87 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!--
+      net48 而不是 net8.0：
+      安装器要跑在「还没装 Reload、可能也没装 .NET」的机器上，
+      而 .NET Framework 4.8 是 Windows 10 1903+ / Windows 11 自带的。
+      这样安装包不需要附带运行时，也不会多出几十 MB。
+    -->
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <RootNamespace>GameSaveSync.Setup</RootNamespace>
+    <AssemblyName>Reload-Setup</AssemblyName>
+    <Product>Reload Setup</Product>
+    <Company>Reload</Company>
+    <Copyright>Copyright © 2026 Reload contributors</Copyright>
+    <Version>1.2.0</Version>
+    <FileVersion>1.2.0</FileVersion>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\app.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      正式发布时把 Reload.exe 作为嵌入资源打进安装器，
+      用户只需下载并运行一个文件。
+      由 build-release.sh 在发布前拷贝到这个位置；
+      仓库里不放这个文件（74MB，不适合进 git）。
+    -->
+    <EmbeddedResource Include="payload\Reload.exe" Condition="Exists('payload\Reload.exe')" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      依赖 dll 也嵌进去，装配成真正的单文件安装器。
+      运行时由 EmbeddedAssemblyLoader 按需释放到临时目录再加载。
+      只嵌入 NuGet 带来的运行时依赖 —— .NET Framework 自带的（如 System.dll）不用管。
+    -->
+    <EmbeddedResource Include="deps\CommunityToolkit.Mvvm.dll" Condition="Exists('deps\CommunityToolkit.Mvvm.dll')" LogicalName="GameSaveSync.Setup.deps.CommunityToolkit.Mvvm.dll" />
+    <EmbeddedResource Include="deps\Microsoft.Bcl.AsyncInterfaces.dll" Condition="Exists('deps\Microsoft.Bcl.AsyncInterfaces.dll')" LogicalName="GameSaveSync.Setup.deps.Microsoft.Bcl.AsyncInterfaces.dll" />
+    <EmbeddedResource Include="deps\System.Buffers.dll" Condition="Exists('deps\System.Buffers.dll')" LogicalName="GameSaveSync.Setup.deps.System.Buffers.dll" />
+    <EmbeddedResource Include="deps\System.ComponentModel.Annotations.dll" Condition="Exists('deps\System.ComponentModel.Annotations.dll')" LogicalName="GameSaveSync.Setup.deps.System.ComponentModel.Annotations.dll" />
+    <EmbeddedResource Include="deps\System.Memory.dll" Condition="Exists('deps\System.Memory.dll')" LogicalName="GameSaveSync.Setup.deps.System.Memory.dll" />
+    <EmbeddedResource Include="deps\System.Numerics.Vectors.dll" Condition="Exists('deps\System.Numerics.Vectors.dll')" LogicalName="GameSaveSync.Setup.deps.System.Numerics.Vectors.dll" />
+    <EmbeddedResource Include="deps\System.Runtime.CompilerServices.Unsafe.dll" Condition="Exists('deps\System.Runtime.CompilerServices.Unsafe.dll')" LogicalName="GameSaveSync.Setup.deps.System.Runtime.CompilerServices.Unsafe.dll" />
+    <EmbeddedResource Include="deps\System.Threading.Tasks.Extensions.dll" Condition="Exists('deps\System.Threading.Tasks.Extensions.dll')" LogicalName="GameSaveSync.Setup.deps.System.Threading.Tasks.Extensions.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      app.config 里的 bindingRedirect 在单文件发布下没有外部 config 可读，
+      把它也嵌进去，由 EmbeddedAssemblyLoader 在程序集绑定事件里手动应用。
+    -->
+    <EmbeddedResource Include="deps\app.config" Condition="Exists('deps\app.config')" LogicalName="GameSaveSync.Setup.deps.app.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 主题与主应用同源：链接同一份文件，改配色两边一起变 -->
+    <Page Include="..\GameSaveSync.App\Themes\Md3Tokens.xaml" Link="Themes\Md3Tokens.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <Link>Themes\Md3Tokens.xaml</Link>
+    </Page>
+    <Page Include="..\GameSaveSync.App\Themes\Md3Controls.xaml" Link="Themes\Md3Controls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <Link>Themes\Md3Controls.xaml</Link>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="System.IO" />
+    <Using Include="System.Globalization" />
+  </ItemGroup>
+
+</Project>
